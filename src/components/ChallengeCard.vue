@@ -1,7 +1,7 @@
 <template>
   <div>
     <section id="challenges" class="challenges">
-      <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card">
+      <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
         <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
         <div class="challenge-content">
           <h2>{{ challenge.title }}</h2>
@@ -23,24 +23,26 @@ export default {
     };
   },
   mounted() {
-    this.fetchChallenges(); // Fetch challenges when component is mounted
+    this.fetchChallenges(); // 컴포넌트가 마운트되면 챌린지 목록을 가져옵니다
   },
   methods: {
     fetchChallenges() {
       axios.get('http://localhost:8080/api/challenges?page=1')
       .then(response => {
-        this.challenges = response.data.data; // Assuming your API response structure
+        this.challenges = response.data.data; // API에서 가져온 챌린지 데이터를 할당합니다
       })
       .catch(error => {
         console.error('Error fetching challenges:', error);
       });
     },
-    startChallenge() {
-      window.location.href = 'https://challengers.co.kr/create-challenge';
+    viewChallengeDetails(challengeId) {
+      // 챌린지 세부 정보 페이지로 라우팅합니다
+      this.$router.push(`/challenges/${challengeId}`);
     }
   }
 }
 </script>
+
 
 <style scoped>
 
