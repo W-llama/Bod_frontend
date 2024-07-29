@@ -1,29 +1,25 @@
 <template>
   <div id="app">
-    <Header />
-    <HeroSection />
-    <ChallengesSection />
-    <ChallengeCard />
-    <Footer />
+    <main>
+      <router-view></router-view> <!-- 라우터 뷰 추가 -->
+    </main>
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue';
-import HeroSection from './components/HeroSection.vue';
-import ChallengesSection from './components/ChallengesSection.vue';
-import ChallengeCard from "@/components/ChallengeCard.vue";
-import Footer from './components/Footer.vue';
-
 export default {
-  components: {
-    Header,
-    HeroSection,
-    ChallengesSection,
-    ChallengeCard,
-    Footer
+  name: 'App',
+  data() {
+    return {
+      // 전역 상태를 여기에 추가할 수 있습니다
+    }
+  },
+  methods: {
+    // 전역 메서드를 여기에 추가할 수 있습니다
   }
-};
+}
 </script>
 
+<style>
 
+</style>
