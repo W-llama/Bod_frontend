@@ -4,4 +4,6 @@ import router from './router'
 import './assets/styles.css'
 
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App);
+app.use(router); // 라우터 사용 설정
+app.mount('#app');
