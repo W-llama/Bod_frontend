@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/Home.vue';
 import UserComponent from '../views/SignUp.vue';
 import LoginComponent from '../views/Login.vue';
+import ChallengeDetails from '../components/ChallengeContent.vue';
 
 
 const routes = [
@@ -21,6 +22,12 @@ const routes = [
     name: 'login',
     component: LoginComponent
   },
+  { path: '/challenges/:challengeId',
+    component: ChallengeDetails,
+    props: route => ({
+      id: Number(route.params.id)
+    })
+  }
 ];
 
 const router = createRouter({
