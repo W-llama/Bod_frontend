@@ -21,7 +21,6 @@ const routes = [
     name: 'login',
     component: LoginComponent
   },
-  // Add more routes as needed
 ];
 
 const router = createRouter({
