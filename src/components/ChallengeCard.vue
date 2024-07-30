@@ -23,13 +23,13 @@ export default {
     };
   },
   mounted() {
-    this.fetchChallenges(); // 컴포넌트가 마운트되면 챌린지 목록을 가져옵니다
+    this.fetchChallenges();
   },
   methods: {
     fetchChallenges() {
-      axios.get('http://localhost:8080/api/challenges?page=1')
+      axios.get('http://localhost:8080/api/challenges/top10')
       .then(response => {
-        this.challenges = response.data.data; // API에서 가져온 챌린지 데이터를 할당합니다
+        this.challenges = response.data.data;
       })
       .catch(error => {
         console.error('Error fetching challenges:', error);

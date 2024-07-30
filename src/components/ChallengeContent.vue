@@ -23,11 +23,13 @@
 <script>
 import axios from 'axios';
 import ChallengeVerifications from './ChallengeVerification.vue';
-import Footer from "@/components/Footer.vue"; // Corrected import path
+import Footer from "@/components/Footer.vue";
+import Header from "@/components/Header.vue"; // Corrected import path
 
 export default {
   name: 'ChallengeContent',
   components: {
+    Header,
     Footer,
     ChallengeVerifications
   },
