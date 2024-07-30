@@ -1,9 +1,8 @@
 <template>
     <Header />
-  <div class="challenge-list">
+  <div class="container">
     <h1>챌린지 카테고리</h1>
 
-    <!-- Category buttons -->
     <div class="category-list">
       <button
           v-for="category in backendCategories"
@@ -15,9 +14,8 @@
       </button>
     </div>
 
-    <!-- Challenge cards -->
-    <div class="challenge-grid">
-      <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card">
+    <div class="challenges">
+      <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
         <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
         <div class="challenge-content">
           <h2 class="challenge-title">{{ challenge.title }}</h2>
@@ -29,7 +27,6 @@
       </div>
     </div>
 
-    <!-- Pagination buttons -->
     <div class="pagination">
       <button v-for="pageNumber in totalPages" :key="pageNumber"
               @click="fetchChallenges(pageNumber)"
@@ -64,10 +61,10 @@ export default {
     fetchChallenges(page) {
       let apiUrl = '';
       if (this.selectedCategory === '전체') {
-        apiUrl = `/api/challenges?page=${page}`;
+        apiUrl = `http://localhost:8080/api/challenges?page=${page}`;
       } else {
         const categoryEnum = this.mapCategoryToBackendEnum(this.selectedCategory);
-        apiUrl = `/api/challenges/category?page=${page}&category=${categoryEnum}`;
+        apiUrl = `http://localhost:8080/api/challenges/category?page=${page}&category=${categoryEnum}`;
       }
       fetch(apiUrl)
       .then(response => response.json())
@@ -99,13 +96,15 @@ export default {
         default:
           return ''; // Handle other cases if necessary
       }
+    },
+    viewChallengeDetails(challengeId) {
+      this.$router.push(`/challenges/${challengeId}`);
     }
   }
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 body, html {
   margin: 0;
@@ -119,29 +118,6 @@ body, html {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-}
-
-header {
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 10px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-links {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-links a {
-  color: #333;
-  text-decoration: none;
-  font-weight: 600;
 }
 
 h1 {
@@ -173,19 +149,50 @@ h1 {
   color: #667eea;
 }
 
-.challenge-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+.challenges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 80px;
+  padding: 120px 30px;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .challenge-card {
-  background-color: white;
-  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: calc(32% - 20px);
+  max-width: calc(32% - 20px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  height: 260px;
 }
+
+@media (max-width: 1024px) {
+  .challenge-card {
+    width: calc(33.33% - 20px);
+    max-width: calc(33.33% - 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .challenge-card {
+    width: calc(50% - 20px);
+    max-width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .challenge-card {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 
 .challenge-card:hover {
   transform: translateY(-5px);
@@ -193,7 +200,7 @@ h1 {
 
 .challenge-image {
   width: 100%;
-  height: 200px;
+  height: 160px;
   object-fit: cover;
 }
 
@@ -201,22 +208,14 @@ h1 {
   padding: 20px;
 }
 
-.challenge-title {
-  font-size: 1.2em;
+.challenge-card h2 {
+  font-size: 24px;
   margin-bottom: 10px;
 }
 
-.challenge-description {
-  font-size: 0.9em;
+.challenge-card p {
+  font-size: 16px;
   color: #666;
-}
-
-.challenge-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-  font-size: 0.8em;
-  color: #888;
 }
 
 .pagination {
@@ -240,4 +239,5 @@ h1 {
   background-color: white;
   color: #667eea;
 }
+
 </style>

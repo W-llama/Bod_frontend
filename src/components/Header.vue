@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <header>
       <div class="container">
         <nav>
           <div class="nav-links">
@@ -14,6 +15,7 @@
           </div>
         </nav>
       </div>
+    </header>
 
     <main>
       <router-view></router-view>
