@@ -36,7 +36,6 @@ export default {
       });
     },
     viewChallengeDetails(challengeId) {
-      // 챌린지 세부 정보 페이지로 라우팅합니다
       this.$router.push(`/challenges/${challengeId}`);
     }
   }
