@@ -23,14 +23,12 @@
 <script>
 import axios from 'axios';
 import ChallengeVerifications from './ChallengeVerification.vue';
-import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue"; // Corrected import path
 
 export default {
   name: 'ChallengeContent',
   components: {
     Footer,
-    Header,
     ChallengeVerifications
   },
   data() {
@@ -117,24 +115,6 @@ header {
 .nav-links a:hover {
   color: #667eea;
   transform: translateY(-2px);
-}
-
-.btn {
-  background-color: #667eea;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: #5a6fd6;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
 }
 
 main {
