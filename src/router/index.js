@@ -1,8 +1,7 @@
-
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/Home.vue';
 import UserComponent from '../views/SignUp.vue';
-import LoginComponent from '../views/Login.vue';
+import LoginComponent from '../components/Login.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
 
 
