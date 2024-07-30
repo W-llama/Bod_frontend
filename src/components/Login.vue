@@ -1,38 +1,41 @@
 <template>
-  <div class="login-container">
-    <div class="background-shape"></div>
-    <div class="logo">
-      <img src="https://challengers.co.kr/logo.png" alt="챌린저스 로고">
-    </div>
-    <h1>환영합니다!</h1>
-    <form @submit.prevent="login">
-      <div class="input-group">
-        <input type="text" v-model="loginData.username" required placeholder=" ">
-        <label for="username">아이디</label>
+  <div class="modal-overlay">
+    <div class="login-container">
+      <button class="close-button" @click="$emit('close')">&times;</button>
+      <div class="background-shape"></div>
+      <div class="logo">
+        <img src="https://challengers.co.kr/logo.png" alt="챌린저스 로고">
       </div>
-      <div class="input-group">
-        <input type="password" v-model="loginData.password" required placeholder=" ">
-        <label for="password">비밀번호</label>
+      <h1>환영합니다!</h1>
+      <form @submit.prevent="loginUser">
+        <div class="input-group">
+          <input type="text" v-model="loginData.username" required placeholder=" ">
+          <label for="username">아이디</label>
+        </div>
+        <div class="input-group">
+          <input type="password" v-model="loginData.password" required placeholder=" ">
+          <label for="password">비밀번호</label>
+        </div>
+        <button type="submit">로그인</button>
+      </form>
+      <div class="social-login">
+        <button class="social-btn google-btn" @click="googleLogin">
+          <i class="fab fa-google"></i> Google
+        </button>
+        <button class="social-btn naver-btn" @click="naverLogin">
+          <i class="fas fa-n"></i> 네이버
+        </button>
       </div>
-      <button type="submit">로그인</button>
-    </form>
-    <div class="social-login">
-      <button class="social-btn google-btn" @click="googleLogin">
-        <i class="fab fa-google"></i> Google
-      </button>
-      <button class="social-btn naver-btn" @click="naverLogin">
-        <i class="fas fa-n"></i> 네이버
-      </button>
-    </div>
-    <div class="links">
-      <router-link to="/signup">회원가입</router-link>
-      <a href="https://challengers.co.kr/forgot-password">비밀번호 찾기</a>
+      <div class="links">
+        <router-link to="/signup">회원가입</router-link>
+        <a href="https://challengers.co.kr/forgot-password">비밀번호 찾기</a>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from '../axios';
+import { mapActions } from 'vuex';
 
 export default {
   data() {
@@ -44,21 +47,16 @@ export default {
     };
   },
   methods: {
-    async login() {
-      try {
-        const response = await axios.post('/login', this.loginData);
-        alert('로그인이 완료되었습니다.');
-        console.log(response.data);
-      } catch (error) {
-        console.error(error.response.data);
-        alert('로그인 실패!');
-      }
+    ...mapActions(['login']),
+    async loginUser() {
+      await this.login(this.loginData);
+      this.$emit('login-success'); // 로그인 성공 이벤트 발생
     },
     googleLogin() {
-      alert('Google 로그인 기능은 Google OAuth 구현이 필요합니다.');
+      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
     },
     naverLogin() {
-      alert('네이버 로그인 기능은 네이버 아이디로 로그인 API 구현이 필요합니다.');
+      window.location.href = 'http://localhost:8080/oauth2/authorization/naver';
     }
   }
 };
@@ -67,15 +65,17 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .login-container {
@@ -176,6 +176,21 @@ button {
 button:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ff9a9e;
+}
+
+.close-button:hover {
+  color: #ff6a6a;
 }
 
 .social-login {

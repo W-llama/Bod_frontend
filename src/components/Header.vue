@@ -1,28 +1,60 @@
 <template>
-  <header>
-    <div class="container">
-      <nav>
-        <div class="nav-links">
-          <a href="#challenges">챌린지</a>
-          <a href="https://challengers.co.kr/create-challenge">챌린지 생성</a>
-          <a href="https://challengers.co.kr/mypage">마이페이지</a>
-        </div>
-        <div class="auth-buttons">
-          <a href="https://challengers.co.kr/login" class="btn">로그인</a>
-          <a href="https://challengers.co.kr/signup" class="btn secondary">회원가입</a>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <div id="app">
+    <header>
+      <div class="container">
+        <nav>
+          <div class="nav-links">
+            <router-link to="/challenges">챌린지</router-link>
+            <a href="https://challengers.co.kr/create-challenge">챌린지 생성</a>
+            <a href="https://challengers.co.kr/mypage">마이페이지</a>
+          </div>
+          <div class="auth-buttons">
+            <button v-if="!isAuthenticated" @click="showLoginModal = true" class="btn">로그인</button>
+            <router-link v-if="!isAuthenticated" to="/signup" class="btn secondary">회원가입</router-link>
+            <button v-if="isAuthenticated" @click="logout" class="btn secondary">로그아웃</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <router-view></router-view>
+    </main>
+
+    <login-modal v-if="showLoginModal" @close="showLoginModal = false" @login-success="handleLoginSuccess"></login-modal>
+  </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+import LoginModal from '../components/Login.vue';
+
 export default {
-  name: 'Header'
+  name: 'Header',
+  components: {
+    LoginModal,
+  },
+  data() {
+    return {
+      showLoginModal: false,
+    };
+  },
+  computed: {
+    ...mapGetters(['isAuthenticated']),
+  },
+  methods: {
+    ...mapActions(['logout']),
+    handleLoginSuccess() {
+      this.showLoginModal = false;
+      this.$store.commit('setAuthenticated', true);
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style>
+/* 전역 스타일을 여기에 추가할 수 있습니다 */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 body, html {
   margin: 0;
@@ -101,5 +133,20 @@ nav {
 .btn.secondary:hover {
   background-color: #667eea;
   color: white;
+}
+
+main {
+  padding: 20px 0;
+}
+
+footer {
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 50px;
+}
+
+footer p {
+  color: #666;
 }
 </style>
