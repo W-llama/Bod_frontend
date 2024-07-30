@@ -4,8 +4,8 @@
       <div class="container">
         <nav>
           <div class="nav-links">
-            <router-link to="/challenges">홈</router-link>
-            <a href="https://challengers.co.kr/create-challenge">챌린지 참여하기</a>
+            <router-link to="/">홈</router-link>
+            <router-link to="/challenges">챌린지 참여하기</router-link>
             <a href="https://challengers.co.kr/mypage">마이페이지</a>
           </div>
           <div class="auth-buttons">
