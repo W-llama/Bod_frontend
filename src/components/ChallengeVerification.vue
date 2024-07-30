@@ -50,8 +50,8 @@ export default {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   display: flex;
-  flex-direction: column; /* Arrange content vertically */
-  justify-content: space-between; /* Distribute space between items */
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .verification-item:hover {
@@ -62,7 +62,7 @@ export default {
   width: 100%;
   height: 150px;
   object-fit: cover;
-  border-radius: 10px 10px 0 0; /* Rounded corners only on top */
+  border-radius: 10px 10px 0 0;
 }
 
 .verification-info {

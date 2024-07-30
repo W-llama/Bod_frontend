@@ -23,12 +23,14 @@
 <script>
 import axios from 'axios';
 import ChallengeVerifications from './ChallengeVerification.vue';
-import Footer from "@/components/Footer.vue"; // Corrected import path
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 export default {
   name: 'ChallengeContent',
   components: {
     Footer,
+    Header,
     ChallengeVerifications
   },
   data() {
@@ -117,43 +119,60 @@ header {
   transform: translateY(-2px);
 }
 
+.btn {
+  background-color: #667eea;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #5a6fd6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
 main {
-  padding: 40px 200px; /* Further reduced padding */
+  padding: 40px 200px;
 }
 
 .challenge-content {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
-  padding: 50px; /* Slightly reduced padding */
+  padding: 50px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .challenge-content h1 {
-  font-size: 32px; /* Slightly reduced font size */
+  font-size: 32px;
   color: #333;
-  margin-bottom: 8px; /* Slightly reduced margin */
+  margin-bottom: 8px;
 }
 
 .challenge-content p {
-  font-size: 18px; /* Slightly reduced font size */
-  color: #666;
-  margin-bottom: 8px; /* Slightly reduced margin */
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
 .challenge-image {
   width: 100%;
-  height: 280px; /* Reduced image height */
+  height: 280px;
   object-fit: cover;
   border-radius: 10px;
-  margin-bottom: 15px; /* Slightly reduced margin */
+  margin-bottom: 15px;
 }
 
 .challenge-description {
-  margin-bottom: 18px; /* Slightly reduced margin */
+  margin-bottom: 18px;
 }
 
 h2 {
-  font-size: 22px; /* Slightly reduced font size */
+  font-size: 22px;
   color: #333;
   margin-top: 0;
 }
