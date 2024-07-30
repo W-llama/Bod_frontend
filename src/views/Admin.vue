@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from '../axios';
 
 export default {
   data() {
@@ -112,7 +112,7 @@ export default {
   methods: {
     async fetchChallenges() {
       try {
-        const response = await axios.get('/api/admins/challenges');
+        const response = await axios.get('/admins/challenges');
         console.log('API Response:', response);
         if (response.status === 200 && response.data) {
           this.challenges = response.data.data || [];
