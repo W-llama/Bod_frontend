@@ -3,8 +3,8 @@
     <div class="container">
       <nav>
         <div class="nav-links">
-          <a href="#challenges">챌린지</a>
-          <a href="https://challengers.co.kr/create-challenge">챌린지 생성</a>
+          <a href="#challenges">홈</a>
+          <a href="#challenges">챌린지 참여하기</a>
           <a href="https://challengers.co.kr/mypage">마이페이지</a>
         </div>
         <div class="auth-buttons">
