@@ -68,7 +68,7 @@
           </tbody>
         </table>
 
-        <button class="create-btn" @click="createNewChallenge">
+        <button class="create-btn" @click="openCreateModal">
           <i class="fas fa-plus"></i> 새 챌린지 만들기
         </button>
       </div>
@@ -82,21 +82,29 @@
 
     <!-- 모달 컴포넌트 -->
     <EditChallengeModal
-        :isVisible="isModalVisible"
+        :isVisible="isEditModalVisible"
         :challenge="selectedChallenge"
-        @close="isModalVisible = false"
+        @close="isEditModalVisible = false"
         @update-success="fetchChallenges"
+    />
+
+    <CreateChallengeModal
+        :isVisible="isCreateModalVisible"
+        @close="isCreateModalVisible = false"
+        @create-success="fetchChallenges"
     />
   </div>
 </template>
 
 <script>
 import axios from '../axios';
-import EditChallengeModal from '../components/EditChallengeModal.vue';  // 모달 컴포넌트 import
+import EditChallengeModal from '../components/EditChallengeModal.vue';
+import CreateChallengeModal from '../components/CreateChallengeModal.vue';
 
 export default {
   components: {
-    EditChallengeModal
+    EditChallengeModal,
+    CreateChallengeModal
   },
   data() {
     return {
@@ -119,7 +127,8 @@ export default {
         todoChallenges: '진행중인 챌린지 수',
         completeChallenges: '마감된 챌린지 수'
       },
-      isModalVisible: false,
+      isEditModalVisible: false,
+      isCreateModalVisible: false,
       selectedChallenge: null
     };
   },
@@ -192,13 +201,32 @@ export default {
     },
     editChallenge(challenge) {
       this.selectedChallenge = challenge;
-      this.isModalVisible = true;
+      this.isEditModalVisible  = true;
     },
-    deleteChallenge(id) {
-      console.log('Deleting challenge:', id);
+    async deleteChallenge(id) {
+      // 확인 대화상자를 띄우고 사용자의 응답을 확인합니다.
+      const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
+      if (isConfirmed) {
+        try {
+          const response = await axios.delete(`/admins/challenges/${id}`);
+          if (response.status === 200) {
+            this.fetchChallenges(); // 목록을 새로고침하여 삭제된 챌린지가 반영되도록 합니다.
+            console.log('Challenge deleted successfully');
+          } else {
+            console.error('Failed to delete challenge:', response.data.msg || 'Unknown error');
+          }
+        } catch (error) {
+          console.error('Error deleting challenge:', error);
+        }
+      } else {
+        console.log('Challenge deletion canceled');
+      }
+    },
+    openCreateModal() {
+      this.isCreateModalVisible = true;
     },
     createNewChallenge() {
-      console.log('Creating new challenge');
+      this.isCreateModalVisible = true;
     },
     changePage(pageNumber) {
       if (pageNumber > 0 && pageNumber <= this.totalPages) {
