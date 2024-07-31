@@ -25,18 +25,16 @@
           <div class="challenge-sidebar">
             <div class="card">
               <h2>챌린지 참여하기</h2>
-              <router-link to="/join-challenge" class="btn btn-primary">지금 참가하기</router-link>
+              <button @click="joinChallenge" class="btn btn-primary">지금 참가하기</button>
             </div>
 
             <div class="card">
               <h2>챌린지 참여자 목록</h2>
-              <div class="challenge-stats">
-                <div class="stat-item">
-                  <li v-for="(user, index) in participants" :key="index">
-                    {{ user.name }} ({{ user.nickname }})
-                  </li>
-                </div>
-              </div>
+              <ul class="participants-list">
+                <li v-for="(user, index) in participants" :key="index">
+                  {{ user.name }} ({{ user.nickname }})
+                </li>
+              </ul>
             </div>
 
             <div class="card">
@@ -56,6 +54,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import axios from 'axios';
 import ChallengeVerifications from './ChallengeVerification.vue';
 import Header from "@/components/Header.vue";
@@ -119,7 +118,33 @@ export default {
       .catch(error => {
         console.error('Error fetching participants:', error);
       });
-    }
+    },
+    async joinChallenge() {
+      const challengeId = this.$route.params.challengeId;
+      try {
+        if (!this.accessToken) {
+
+          await this.$store.dispatch('fetchToken');
+        }
+        const response = await axios.post(
+            `http://localhost:8080/api/challenges/${challengeId}`,
+            {},
+            {
+              headers: {
+                Authorization: this.accessToken,
+              },
+            }
+        );
+        alert("성공적으로 신청이 완료되었습니다!");
+        console.log('챌린지 신청: ', response.data);
+        this.$router.go();
+      } catch (error) {
+        alert('이미 참여하신 챌린지이거나 일시적 서버오류로 실패하였습니다.');
+      }
+    },
+  },
+  computed: {
+    ...mapGetters(['accessToken'])
   },
   created() {
     const challengeId = this.$route.params.challengeId;
@@ -171,8 +196,7 @@ export default {
 
 .challenge-image {
   width: 100%;
-  height: 300px;
-  object-fit: cover;
+  height: 400px;
   border-radius: 10px;
   margin-bottom: 1rem;
 }
@@ -180,6 +204,7 @@ export default {
 h2 {
   color: #667eea;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .challenge-sidebar {
@@ -209,6 +234,27 @@ h2 {
 .top-users li {
   padding: 0.5rem 0;
   border-bottom: 1px solid #eee;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: #667eea;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-primary:hover {
+  background-color: #5a67d8;
 }
 
 </style>
