@@ -149,15 +149,17 @@ export default {
         console.log('챌린지 신청: ', response.data);
         this.$router.go();
       } catch (error) {
-        alert('챌린지 신청 실패');
+        alert('이미 참여하신 챌린지이거나 일시적 서버오류로 실패하였습니다.');
       }
     },
-    ...mapGetters(['accessToken'])
-  },
-  created() {
-    const challengeId = this.$route.params.challengeId;
-    this.fetchChallengeDetails(challengeId);
-  }
+    },
+    computed: {
+      ...mapGetters(['accessToken'])
+    },
+    created() {
+      const challengeId = this.$route.params.challengeId;
+      this.fetchChallengeDetails(challengeId);
+    }
 };
 </script>
 
