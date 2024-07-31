@@ -49,10 +49,20 @@ export default {
       this.$store.commit('setAuthenticated', true);
     },
   },
+  created() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('token');
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+      this.$store.commit('setAccessToken', accessToken);
+      this.$store.commit('setAuthenticated', true);
+      this.$store.dispatch('fetchUserProfile');
+    }
+  }
 };
 </script>
 
-<style>
+<style scoped>
 /* 전역 스타일을 여기에 추가할 수 있습니다 */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
