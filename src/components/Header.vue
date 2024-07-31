@@ -6,7 +6,7 @@
           <div class="nav-links">
             <router-link to="/">홈</router-link>
             <router-link to="/challenges">챌린지 참여하기</router-link>
-            <a href="https://challengers.co.kr/mypage">마이페이지</a>
+            <router-link to="/myPage">마이페이지</router-link>
           </div>
           <div class="auth-buttons">
             <button v-if="!isAuthenticated" @click="showLoginModal = true" class="btn">로그인</button>

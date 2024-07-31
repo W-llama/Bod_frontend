@@ -1,12 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import HomeView from '../views/Home.vue';
 import UserComponent from '../views/SignUp.vue';
-import LoginComponent from '../components/Login.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
 import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
+import MyPage from "@/views/MyPage.vue";
+import ChangePassword from "@/views/ChangePassword.vue";
 import Verification from "@/components/VerificationFrom.vue";
-
 
 const routes = [
   {
@@ -18,11 +18,6 @@ const routes = [
     path: '/signup',
     name: 'signup',
     component: UserComponent
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: LoginComponent
   },
   { path: '/challenges/:challengeId',
     component: ChallengeDetails,
@@ -39,6 +34,16 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView
+  },
+  {
+    path: '/myPage',
+    name: 'myPage',
+    component: MyPage
+  },
+  {
+    path: '/changePassword',
+    name: 'changePassword',
+    component: ChangePassword
   },
   {
     path: '/challenges/:challengeId/verify',
