@@ -11,6 +11,7 @@ export default createStore({
   getters: {
     isAuthenticated: state => state.isAuthenticated,
     userProfile: state => state.userProfile,
+    accessToken: state => state.accessToken,
   },
   mutations: {
     setAuthenticated(state, status) {
@@ -18,6 +19,7 @@ export default createStore({
     },
     setAccessToken(state, token) {
       state.accessToken = token;
+      localStorage.setItem('accessToken', token);
     },
     setUserProfile(state, profile) {
       state.userProfile = profile;
@@ -29,7 +31,7 @@ export default createStore({
     }
   },
   actions: {
-    async login({ commit }, loginData) {
+    async login({commit}, loginData) {
       try {
         const response = await axios.post('/login', loginData);
         const accessToken = response.headers['authorization'];
@@ -47,7 +49,7 @@ export default createStore({
         alert('로그인 실패! 오류: ' + error.message);
       }
     },
-    async logout({ commit }) {
+    async logout({commit}) {
       try {
         const accessToken = localStorage.getItem('accessToken');
         await axios.delete('/logout', {
@@ -62,7 +64,7 @@ export default createStore({
         alert('로그아웃 실패! 오류: ' + error.message);
       }
     },
-    async fetchUserProfile({ commit }) {
+    async fetchUserProfile({commit}) {
       try {
         const response = await axios.get('/users/profile');
         commit('setUserProfile', response.data.data);
@@ -71,7 +73,7 @@ export default createStore({
         alert('프로필 조회에 실패했습니다. 다시 로그인 해주세요.');
       }
     },
-    async updateProfile({ commit }, profileData) {
+    async updateProfile({commit}, profileData) {
       try {
         const response = await axios.put('/users/profile', profileData);
         commit('setUserProfile', response.data.data);
@@ -81,7 +83,7 @@ export default createStore({
         alert('프로필 수정에 실패했습니다.');
       }
     },
-    async updateProfileImage({ commit }, imageData) {
+    async updateProfileImage({commit}, imageData) {
       try {
         const formData = new FormData();
         formData.append('profileImage', imageData);
@@ -98,14 +100,23 @@ export default createStore({
         alert('프로필 이미지 수정 실패: ' + error.message);
       }
     },
-    async changePassword({ commit }, passwordData) {
+    async changePassword({commit}, passwordData) {
       try {
         await axios.put('/users/profile/password', passwordData);
         alert('비밀번호가 성공적으로 변경되었습니다.');
       } catch (error) {
         console.error('비밀번호 변경 실패:', error);
       }
+    },
+    async fetchToken({commit}) {
+      try {
+        const token = localStorage.getItem('accessToken');
+        commit('setAccessToken', token);
+      } catch (error) {
+        console.error('Failed to fetch token:', error);
+        throw error;
+      }
     }
-  },
+  }
 
 });
