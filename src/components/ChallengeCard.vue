@@ -1,11 +1,16 @@
 <template>
   <div>
-    <section id="challenges" class="challenges">
-      <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
-        <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
-        <div class="challenge-content">
-          <h2>{{ challenge.title }}</h2>
-          <p>{{ challenge.content }}</p>
+    <section id="challenges" class="popular-challenges">
+      <div class="container">
+        <h2>인기 있는 챌린지 TOP 10</h2>
+        <div class="challenges">
+          <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
+            <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
+            <div class="challenge-content">
+              <h2>{{ challenge.title }}</h2>
+              <p>{{ challenge.content }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -29,7 +34,12 @@ export default {
     fetchChallenges() {
       axios.get('http://localhost:8080/api/challenges/top10')
       .then(response => {
-        this.challenges = response.data.data;
+        this.challenges = response.data.data.map(challenge => ({
+          id: challenge.id,
+          title: challenge.title,
+          content: challenge.content,
+          image: challenge.imageUrl,
+        }));
       })
       .catch(error => {
         console.error('Error fetching challenges:', error);
@@ -39,53 +49,51 @@ export default {
       this.$router.push(`/challenges/${challengeId}`);
     }
   }
-}
+};
 </script>
 
 
 <style scoped>
+.popular-challenges {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 30px;
+  margin: 50px;
+}
+
+.popular-challenges h2 {
+  font-size: 32px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+}
 
 .challenges {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-top: 80px;
-  padding: 120px 30px;
-  max-width: 1600px;
-  margin: 0 auto;
+  margin-top: 50px;
 }
 
 .challenge-card {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
   overflow: hidden;
-  margin-bottom: 30px;
-  width: calc(25% - 30px);
-  max-width: calc(25% - 30px);
+  margin-bottom: 20px;
+  width: calc(33.33% - 20px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  height: 240px;
 }
 
 @media (max-width: 1024px) {
   .challenge-card {
-    width: calc(33.33% - 30px);
-    max-width: calc(33.33% - 30px);
+    width: calc(50% - 20px);
   }
 }
 
 @media (max-width: 768px) {
   .challenge-card {
-    width: calc(50% - 30px);
-    max-width: calc(50% - 30px);
-  }
-}
-
-@media (max-width: 480px) {
-  .challenge-card {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
+    width: calc(100% - 20px);
   }
 }
 
@@ -95,7 +103,7 @@ export default {
 
 .challenge-image {
   width: 100%;
-  height: 160px;
+  height: 200px;
   object-fit: cover;
 }
 
@@ -112,5 +120,4 @@ export default {
   font-size: 16px;
   color: #666;
 }
-
 </style>
