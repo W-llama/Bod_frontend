@@ -5,6 +5,7 @@ import LoginComponent from '../components/Login.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
 import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
+import Verification from "@/components/VerificationFrom.vue";
 
 
 const routes = [
@@ -38,6 +39,12 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminView
+  },
+  {
+    path: '/challenges/:challengeId/verify',
+    name: 'VerificationModal',
+    component: Verification,
+    props: true
   }
 ];
 
