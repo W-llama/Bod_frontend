@@ -13,10 +13,6 @@
           <input type="text" v-model="localChallenge.content" id="content" required />
         </div>
         <div>
-          <label for="title">이미지</label>
-          <input type="text" v-model="localChallenge.image" id="image" required />
-        </div>
-        <div>
           <label for="category">카테고리</label>
           <input type="text" v-model="localChallenge.category" id="category" required />
         </div>
