@@ -31,7 +31,7 @@ export default createStore({
     }
   },
   actions: {
-    async login({commit}, loginData) {
+    async login({ commit }, loginData) {
       try {
         const response = await axios.post('/login', loginData);
         const accessToken = response.headers['authorization'];
@@ -49,13 +49,16 @@ export default createStore({
         alert('로그인 실패! 오류: ' + error.message);
       }
     },
-    async logout({commit}) {
+    async oauth2Login({ commit }, provider) {
+      window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+    },
+    async logout({ commit }) {
       try {
         const accessToken = localStorage.getItem('accessToken');
         await axios.delete('/logout', {
           headers: {
             Authorization: accessToken,
-          }
+          },
         });
         localStorage.removeItem('accessToken');
         commit('clearAuth');
@@ -66,7 +69,12 @@ export default createStore({
     },
     async fetchUserProfile({commit}) {
       try {
-        const response = await axios.get('/users/profile');
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get('/users/profile', {
+          headers : {
+            Authorization: accessToken,
+          },
+        });
         commit('setUserProfile', response.data.data);
       } catch (error) {
         console.error('프로필 조회 실패:', error);
@@ -75,7 +83,12 @@ export default createStore({
     },
     async updateProfile({commit}, profileData) {
       try {
-        const response = await axios.put('/users/profile', profileData);
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.put('/users/profile', profileData, {
+          headers : {
+            Authorization: accessToken,
+          },
+        });
         commit('setUserProfile', response.data.data);
         alert('프로필이 성공적으로 수정되었습니다.');
       } catch (error) {
@@ -87,11 +100,13 @@ export default createStore({
       try {
         const formData = new FormData();
         formData.append('profileImage', imageData);
-
+        const accessToken = localStorage.getItem('accessToken');
+        console.log(accessToken);
         const response = await axios.put('/users/profile/image', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+            Authorization:accessToken
+          },
         });
         commit('setUserProfile', response.data.data);
         alert('프로필 이미지가 수정되었습니다.');
@@ -102,7 +117,12 @@ export default createStore({
     },
     async changePassword({commit}, passwordData) {
       try {
-        await axios.put('/users/profile/password', passwordData);
+        const accessToken = localStorage.getItem('accessToken');
+        await axios.put('/users/profile/password', passwordData, {
+          headers: {
+            Authorization: accessToken
+          }
+        });
         alert('비밀번호가 성공적으로 변경되었습니다.');
       } catch (error) {
         console.error('비밀번호 변경 실패:', error);

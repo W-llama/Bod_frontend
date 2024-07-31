@@ -22,29 +22,38 @@ instance.interceptors.request.use(
 
 // 응답 인터셉터 추가
 instance.interceptors.response.use(
-    response => response,
+    response => {
+      const accessToken = response.headers['authorization'];
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken);
+        store.commit('setAccessToken', accessToken);
+        store.commit('setAuthenticated', true);
+      }
+      return response;
+    },
     async error => {
       const originalRequest = error.config;
 
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
-          const response = await axios.post('http://localhost:8080/api/refresh-token', {}, { withCredentials: true });
-          const newAccessToken = response.data.data.accessToken;
+          const refreshTokenResponse = await axios.post('/api/refresh-token', null, {
+            withCredentials: true,
+          });
 
+          const newAccessToken = refreshTokenResponse.data.data.accessToken;
           localStorage.setItem('accessToken', newAccessToken);
           store.commit('setAccessToken', newAccessToken);
 
-          axios.defaults.headers.common['Authorization'] = newAccessToken;
-          originalRequest.headers['Authorization'] = newAccessToken;
-
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return axios(originalRequest);
-        } catch (e) {
-          console.error('리프레시 토큰이 만료되었습니다. 다시 로그인 해주세요.');
+        } catch (refreshError) {
           store.commit('clearAuth');
-          return Promise.reject(e);
+          alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
+          return Promise.reject(refreshError);
         }
       }
+
       return Promise.reject(error);
     }
 );

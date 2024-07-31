@@ -47,16 +47,16 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['login']),
+    ...mapActions(['login', 'oauth2Login']),
     async loginUser() {
       await this.login(this.loginData);
       this.$emit('login-success'); // 로그인 성공 이벤트 발생
     },
     googleLogin() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+      this.oauth2Login('google');
     },
     naverLogin() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/naver';
+      this.oauth2Login('naver');
     }
   }
 };
