@@ -60,7 +60,7 @@
             <td>{{ formatDate(challenge.startTime) }}</td>
             <td>{{ formatDate(challenge.endTime) }}</td>
             <td>
-              <button @click="getChallenge(challenge.challengeId)" class="btn btn-get">조회하기</button>
+              <button @click="viewChallengeDetail(challenge.challengeId)" class="btn btn-get">조회하기</button>
               <button @click="editChallenge(challenge)" class="btn">수정하기</button>
               <button @click="deleteChallenge(challenge.challengeId)" class="btn btn-delete">삭제하기</button>
             </td>
@@ -97,6 +97,7 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
 import axios from '../axios';
 import EditChallengeModal from '../components/EditChallengeModal.vue';
 import CreateChallengeModal from '../components/CreateChallengeModal.vue';
@@ -196,8 +197,8 @@ export default {
       this.currentPage = 1;
       this.fetchChallenges();
     },
-    getChallenge(id) {
-      console.log('Getting challenge:', id);
+    viewChallengeDetail(id) {
+      this.$router.push({ name: 'adminChallengeDetail', params: { challengeId: id } });
     },
     editChallenge(challenge) {
       this.selectedChallenge = challenge;
