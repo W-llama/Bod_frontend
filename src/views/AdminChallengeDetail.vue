@@ -61,14 +61,14 @@
           </thead>
           <tbody>
           <tr v-for="record in certificationRecords" :key="record.id">
-            <td>{{ record.id }}</td>
-            <td>{{ record.date }}</td>
+            <td>{{ record.user }}</td>
+            <td>{{ record.createdAt }}</td>
             <td><img :src="record.image" alt="Certification Image" class="certification-image"></td>
             <td>{{ record.title }}</td>
             <td>{{ record.status }}</td>
             <td>
-              <button @click="approveRecord(record.id)" class="btn btn-approve" v-if="record.status === 'PENDING'">승인</button>
-              <button @click="rejectRecord(record.id)" class="btn btn-reject" v-if="record.status === 'PENDING'">거절</button>
+              <button @click="approveRecord(record.verificationId)" class="btn btn-approve" v-if="record.status === 'PENDING'">승인</button>
+              <button @click="rejectRecord(record.verificationId)" class="btn btn-reject" v-if="record.status === 'PENDING'">거절</button>
             </td>
           </tr>
           </tbody>
@@ -97,9 +97,7 @@ export default {
         console.log('API 응답:', response.data);
 
         if (response.status === 200 && response.data) {
-
           this.challengeInfo = response.data.data;
-
         } else {
           console.error('Failed to fetch challenge details:', response.data.msg || 'Unknown error');
         }
@@ -107,22 +105,70 @@ export default {
         console.error('Error fetching challenge details:', error);
       }
     },
-    approveRecord(id) {
-      console.log('인증 승인:', id);
+    async fetchCertificationRecords() {
+      try {
+        const challengeId = this.$route.params.challengeId;
+        const response = await axios.get(`/admins/challenges/${challengeId}/verifications`);
+
+        console.log('API 응답:', response.data);
+
+        if (response.status === 200 && response.data) {
+          this.certificationRecords = response.data.data;
+        } else {
+          console.error('Failed to fetch certification records:', response.data.msg || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error fetching certification records:', error);
+      }
     },
-    rejectRecord(id) {
-      console.log('인증 거절:', id);
+    async approveRecord(id) {
+      console.log('Approve Record ID:', id); // 추가된 로그
+      try {
+        if (!id) {
+          console.error('Invalid ID for approval');
+          return;
+        }
+        const response = await axios.put(`/admins/verifications/${id}/approve`);
+
+        if (response.status === 200) {
+          console.log('인증 승인 성공:', response.data);
+          this.fetchCertificationRecords();
+        } else {
+          console.error('Failed to approve certification record:', response.data.msg || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error approving certification record:', error);
+      }
+    },
+    async rejectRecord(id) {
+      console.log('Reject Record ID:', id); // 추가된 로그
+      try {
+        if (!id) {
+          console.error('Invalid ID for rejection');
+          return;
+        }
+        const response = await axios.put(`/admins/verifications/${id}/reject`);
+
+        if (response.status === 200) {
+          console.log('인증 거절 성공:', response.data);
+          this.fetchCertificationRecords();
+        } else {
+          console.error('Failed to reject certification record:', response.data.msg || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error rejecting certification record:', error);
+      }
     }
   },
   created() {
     this.fetchChallengeDetails();
+    this.fetchCertificationRecords();
   }
 };
 </script>
 
-
-
 <style scoped>
+/* 스타일 정의 */
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f7fafc;
