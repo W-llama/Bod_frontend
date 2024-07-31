@@ -66,9 +66,20 @@ export default {
     closeModal() {
       this.$emit('close');
     },
+    formatDate(date) {
+      const d = new Date(date);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+    },
     async updateChallenge() {
       try {
-        const response = await axios.patch(`/admins/challenges/${this.localChallenge.challengeId}`, this.localChallenge);
+        const formattedStartTime = this.formatDate(this.localChallenge.startTime);
+        const formattedEndTime = this.formatDate(this.localChallenge.endTime);
+        const response = await axios.patch(`/admins/challenges/${this.localChallenge.challengeId}`, {
+          ...this.localChallenge,
+          startTime: formattedStartTime,
+          endTime: formattedEndTime
+        });
+
         if (response.status === 200) {
           this.$emit('update-success');
           this.closeModal();

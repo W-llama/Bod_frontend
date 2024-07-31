@@ -103,7 +103,7 @@ export default {
       activeTab: 'dashboard',
       searchQuery: '',
       currentPage: 1,
-      pageSize: 50,
+      pageSize: 100,
       totalPages: 1,
       totalChallenges: 0,
       challenges: [],
