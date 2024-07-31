@@ -138,6 +138,7 @@ export default {
         const response = await axios.post('/signup', this.signUpData);
         alert('회원가입 성공!');
         console.log(response.data);
+        this.$router.push('/');
       } catch (error) {
         console.error(error.response.data);
         alert('회원가입 실패!');
@@ -486,3 +487,7 @@ button:hover {
   color: #764ba2;
 }
 </style>
+<img :src="userProfile && userProfile.image ? userProfile.image : 'https://source.unsplash.com/random/200x200?portrait'" alt="프로필 사진" class="profile-picture">
+<h1>{{ userProfile && userProfile.nickname }}</h1>
+<p>{{ userProfile && userProfile.introduce }}</p>
+<button @click="showProfileEditModal = true" class="btn">프로필 수정</button>
