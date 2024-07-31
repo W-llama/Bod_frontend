@@ -38,10 +38,11 @@
             </div>
 
             <div class="card">
-              <h2>상위 참가자</h2>
+              <h2>챌린지 인증</h2>
+              <h2>TOP3 참여자 </h2>
               <ul class="top-users">
                 <li v-for="(topUser, index) in topUsers" :key="index">
-                  {{ topUser.name }} ({{ topUser.streak }}일 연속 인증)
+                  {{ index + 1 }}등 {{ topUser.name }} ({{ topUser.nickname }})
                 </li>
               </ul>
             </div>
@@ -96,6 +97,7 @@ export default {
         this.challenge = response.data.data;
         this.fetchVerifications(challengeId);
         this.fetchParticipants(challengeId);
+        this.fetchTop3Users(challengeId); // Fetch top 3 users after fetching other data
       })
       .catch(error => {
         console.error('Error fetching challenge details:', error);
@@ -119,11 +121,19 @@ export default {
         console.error('Error fetching participants:', error);
       });
     },
+    fetchTop3Users(challengeId) {
+      axios.get(`http://localhost:8080/api/challenges/${challengeId}/verifications/top3users`)
+      .then(response => {
+        this.topUsers = response.data.data;
+      })
+      .catch(error => {
+        console.error('Error fetching top 3 users:', error);
+      });
+    },
     async joinChallenge() {
       const challengeId = this.$route.params.challengeId;
       try {
         if (!this.accessToken) {
-
           await this.$store.dispatch('fetchToken');
         }
         const response = await axios.post(
@@ -139,11 +149,9 @@ export default {
         console.log('챌린지 신청: ', response.data);
         this.$router.go();
       } catch (error) {
-        alert('이미 참여하신 챌린지이거나 일시적 서버오류로 실패하였습니다.');
+        alert('챌린지 신청 실패');
       }
     },
-  },
-  computed: {
     ...mapGetters(['accessToken'])
   },
   created() {
