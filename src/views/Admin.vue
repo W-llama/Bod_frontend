@@ -194,8 +194,24 @@ export default {
       this.selectedChallenge = challenge;
       this.isModalVisible = true;
     },
-    deleteChallenge(id) {
-      console.log('Deleting challenge:', id);
+    async deleteChallenge(id) {
+      // 확인 대화상자를 띄우고 사용자의 응답을 확인합니다.
+      const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
+      if (isConfirmed) {
+        try {
+          const response = await axios.delete(`/admins/challenges/${id}`);
+          if (response.status === 200) {
+            this.fetchChallenges(); // 목록을 새로고침하여 삭제된 챌린지가 반영되도록 합니다.
+            console.log('Challenge deleted successfully');
+          } else {
+            console.error('Failed to delete challenge:', response.data.msg || 'Unknown error');
+          }
+        } catch (error) {
+          console.error('Error deleting challenge:', error);
+        }
+      } else {
+        console.log('Challenge deletion canceled');
+      }
     },
     createNewChallenge() {
       console.log('Creating new challenge');
