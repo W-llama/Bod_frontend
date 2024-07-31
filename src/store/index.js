@@ -5,9 +5,12 @@ export default createStore({
   state: {
     isAuthenticated: false,
     accessToken: '',
+    userProfile: null,
+    refreshToken : null,
   },
   getters: {
     isAuthenticated: state => state.isAuthenticated,
+    userProfile: state => state.userProfile,
   },
   mutations: {
     setAuthenticated(state, status) {
@@ -16,9 +19,13 @@ export default createStore({
     setAccessToken(state, token) {
       state.accessToken = token;
     },
+    setUserProfile(state, profile) {
+      state.userProfile = profile;
+    },
     clearAuth(state) {
       state.isAuthenticated = false;
       state.accessToken = '';
+      state.userProfile = null;
     }
   },
   actions: {
@@ -30,6 +37,7 @@ export default createStore({
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
           commit('setAccessToken', accessToken);
+
           commit('setAuthenticated', true);
           alert('로그인이 완료되었습니다.');
         } else {
@@ -54,5 +62,50 @@ export default createStore({
         alert('로그아웃 실패! 오류: ' + error.message);
       }
     },
+    async fetchUserProfile({ commit }) {
+      try {
+        const response = await axios.get('/users/profile');
+        commit('setUserProfile', response.data.data);
+      } catch (error) {
+        console.error('프로필 조회 실패:', error);
+        alert('프로필 조회에 실패했습니다. 다시 로그인 해주세요.');
+      }
+    },
+    async updateProfile({ commit }, profileData) {
+      try {
+        const response = await axios.put('/users/profile', profileData);
+        commit('setUserProfile', response.data.data);
+        alert('프로필이 성공적으로 수정되었습니다.');
+      } catch (error) {
+        console.error('프로필 수정 실패:', error);
+        alert('프로필 수정에 실패했습니다.');
+      }
+    },
+    async updateProfileImage({ commit }, imageData) {
+      try {
+        const formData = new FormData();
+        formData.append('profileImage', imageData);
+
+        const response = await axios.put('/users/profile/image', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        commit('setUserProfile', response.data.data);
+        alert('프로필 이미지가 수정되었습니다.');
+      } catch (error) {
+        console.error('프로필 이미지 수정 실패:', error);
+        alert('프로필 이미지 수정 실패: ' + error.message);
+      }
+    },
+    async changePassword({ commit }, passwordData) {
+      try {
+        await axios.put('/users/profile/password', passwordData);
+        alert('비밀번호가 성공적으로 변경되었습니다.');
+      } catch (error) {
+        console.error('비밀번호 변경 실패:', error);
+      }
+    }
   },
+
 });
