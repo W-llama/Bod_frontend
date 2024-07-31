@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import HomeView from '../views/Home.vue';
 import UserComponent from '../views/SignUp.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
@@ -6,6 +6,7 @@ import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
 import MyPage from "@/views/MyPage.vue";
 import ChangePassword from "@/views/ChangePassword.vue";
+import Verification from "@/components/VerificationFrom.vue";
 
 const routes = [
   {
@@ -44,6 +45,12 @@ const routes = [
     name: 'changePassword',
     component: ChangePassword
   },
+  {
+    path: '/challenges/:challengeId/verify',
+    name: 'VerificationModal',
+    component: Verification,
+    props: true
+  }
 ];
 
 const router = createRouter({

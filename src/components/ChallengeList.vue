@@ -1,5 +1,5 @@
 <template>
-    <Header />
+  <Header />
   <div class="container">
     <h1>챌린지 카테고리</h1>
 
@@ -15,14 +15,11 @@
     </div>
 
     <div class="challenges">
-      <div v-for="challenge in challenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
-        <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
+      <div v-for="challenge in paginatedChallenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
+        <img :src="challenge.imageUrl" :alt="challenge.title" class="challenge-image">
         <div class="challenge-content">
           <h2 class="challenge-title">{{ challenge.title }}</h2>
           <p class="challenge-description">{{ challenge.content }}</p>
-          <div class="challenge-meta">
-<!--            <span>{{ challenge.duration }}</span>-->
-          </div>
         </div>
       </div>
     </div>
@@ -39,39 +36,55 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 
 export default {
   name: 'ChallengeList',
-  components: {Footer, Header},
+  components: { Header, Footer },
   data() {
     return {
-      backendCategories: ['전체', '건강', '공부', '취미', '경제', '기타'], // Adjusted to match backend enum values
+      backendCategories: ['전체', '건강', '공부', '취미', '경제', '기타'],
       selectedCategory: '전체',
       challenges: [],
       currentPage: 1,
-      totalPages: 0
+      itemsPerPage: 6,
     };
   },
   mounted() {
-    this.fetchChallenges(this.currentPage); // Fetch challenges for initial page
+    this.fetchChallenges(this.currentPage);
+  },
+  computed: {
+    filteredChallenges() {
+      if (this.selectedCategory === '전체') {
+        return this.challenges;
+      }
+      return this.challenges.filter(challenge => challenge.category === this.mapCategoryToBackendEnum(this.selectedCategory));
+    },
+    paginatedChallenges() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredChallenges.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredChallenges.length / this.itemsPerPage);
+    }
   },
   methods: {
-    fetchChallenges(page) {
+    fetchChallenges(pageNumber) {
       let apiUrl = '';
       if (this.selectedCategory === '전체') {
-        apiUrl = `http://localhost:8080/api/challenges?page=${page}`;
+        apiUrl = `http://localhost:8080/api/challenges?page=${pageNumber}`;
       } else {
         const categoryEnum = this.mapCategoryToBackendEnum(this.selectedCategory);
-        apiUrl = `http://localhost:8080/api/challenges/category?page=${page}&category=${categoryEnum}`;
+        apiUrl = `http://localhost:8080/api/challenges/category?page=${pageNumber}&category=${categoryEnum}`;
       }
-      fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        this.challenges = data.data;
-        this.totalPages = data.totalPages; // Assuming your backend sends total pages info
-        this.currentPage = page;
+
+      axios.get(apiUrl)
+      .then(response => {
+        this.challenges = response.data.data;
+        this.currentPage = pageNumber;
       })
       .catch(error => {
         console.error('Error fetching challenges:', error);
@@ -79,7 +92,8 @@ export default {
     },
     selectCategory(category) {
       this.selectedCategory = category;
-      this.fetchChallenges(1); // Reset to page 1 when category changes
+      this.currentPage = 1;
+      this.fetchChallenges(this.currentPage);
     },
     mapCategoryToBackendEnum(category) {
       switch (category) {
@@ -94,7 +108,7 @@ export default {
         case '기타':
           return 'ETC';
         default:
-          return ''; // Handle other cases if necessary
+          return '';
       }
     },
     viewChallengeDetails(challengeId) {
@@ -105,15 +119,6 @@ export default {
 </script>
 
 <style scoped>
-
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #333;
-}
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -154,7 +159,7 @@ h1 {
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 80px;
-  padding: 120px 30px;
+  padding: 0 30px; /* Adjusted padding */
   max-width: 1600px;
   margin: 0 auto;
 }
@@ -168,7 +173,7 @@ h1 {
   max-width: calc(32% - 20px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  height: 260px;
+  height: 300px; /* Increased height */
 }
 
 @media (max-width: 1024px) {
@@ -193,7 +198,6 @@ h1 {
   }
 }
 
-
 .challenge-card:hover {
   transform: translateY(-5px);
 }
@@ -208,12 +212,12 @@ h1 {
   padding: 20px;
 }
 
-.challenge-card h2 {
-  font-size: 24px;
+.challenge-title {
+  font-size: 22px; /* Adjusted font size */
   margin-bottom: 10px;
 }
 
-.challenge-card p {
+.challenge-description {
   font-size: 16px;
   color: #666;
 }
@@ -239,5 +243,4 @@ h1 {
   background-color: white;
   color: #667eea;
 }
-
 </style>
