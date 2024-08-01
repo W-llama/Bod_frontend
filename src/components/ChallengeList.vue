@@ -15,7 +15,7 @@
 
     <div class="challenges">
       <div
-          v-for="challenge in paginatedChallenges"
+          v-for="challenge in challenges"
           :key="challenge.id"
           class="challenge-card"
           @click="viewChallengeDetails(challenge.id)"
@@ -57,16 +57,10 @@ export default {
     };
   },
   mounted() {
-    console.log('Mounted, fetching challenges for page:', this.currentPage);
     this.fetchChallenges(this.currentPage);
   },
   computed: {
-    paginatedChallenges() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      console.log('Paginated Challenges:', this.challenges.slice(start, end));
-      return this.challenges.slice(start, end);
-    }
+
   },
   methods: {
     fetchChallenges(pageNumber) {
@@ -86,10 +80,10 @@ export default {
         console.log('API Response:', response.data);
         this.challenges = response.data.data.content;
         this.totalPages = response.data.data.totalPages;
-        console.log('Challenges:', this.challenges); // Check if challenges are updated correctly
+        console.log('Challenges:', this.challenges);
       })
       .catch(error => {
-        console.error('Error fetching challenges:', error);
+        console.error('챌린지 조회 실패', error);
       });
     },
     selectCategory(category) {
@@ -155,7 +149,7 @@ h1 {
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 80px;
-  padding: 0 30px; /* Adjusted padding */
+  padding: 0 30px;
   max-width: 1600px;
   margin: 0 auto;
 }
@@ -169,7 +163,7 @@ h1 {
   max-width: calc(32% - 20px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  height: 330px; /* Increased height */
+  height: 330px;
 }
 
 @media (max-width: 1024px) {
@@ -209,7 +203,7 @@ h1 {
 }
 
 .challenge-title {
-  font-size: 22px; /* Adjusted font size */
+  font-size: 22px;
   margin-bottom: 10px;
 }
 
