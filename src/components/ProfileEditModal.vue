@@ -38,8 +38,7 @@ export default {
   },
   methods: {
     onFileChange(event) {
-      const file = event.target.files[0];
-      this.profileData.image = file;
+      this.profileData.image = event.target.files[0];
     },
     async submitEditProfile() {
       try {
@@ -71,6 +70,7 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* Ensure the modal is above other content */
 }
 
 .modal-content {
@@ -78,7 +78,11 @@ export default {
   padding: 20px;
   border-radius: 5px;
   width: 400px;
+  max-width: 80%; /* Make sure the modal doesn't exceed the screen width */
+  max-height: 80%; /* Make sure the modal doesn't exceed the screen height */
+  overflow: auto; /* Enable scrolling if the content overflows */
   position: relative;
+  box-sizing: border-box;
 }
 
 .close {
@@ -91,6 +95,7 @@ export default {
 
 .input-group {
   margin-bottom: 15px;
+  width: 100%; /* Ensure input groups take full width */
 }
 
 .input-group label {

@@ -2,22 +2,23 @@
   <aside class="sidebar">
     <div class="sidebar-logo">챌린저스</div>
     <div class="sidebar-profile">
-      <img :src="user.profileImage" :alt="user.name" class="sidebar-profile-image" />
-      <div class="sidebar-profile-name">{{ user.name }}</div>
-      <div class="sidebar-profile-email">{{ user.email }}</div>
+      <img :src="profileImageUrl" alt="프로필 사진" class="sidebar-profile-image">
+      <div class="sidebar-profile-name">{{ userProfile && userProfile.nickname }}</div>
+      <div class="sidebar-profile-introduce">{{ userProfile && userProfile.introduce }}</div>
+      <button @click="$emit('edit-profile')" class="btn">프로필 수정</button>
       <div class="sidebar-stats">
         <div class="sidebar-stat-item">
-          <div class="sidebar-stat-value">{{ user.totalChallenges }}</div>
+          <div class="sidebar-stat-value">{{ totalChallengesCount }}</div>
           <div class="sidebar-stat-label">총 챌린지</div>
         </div>
         <div class="sidebar-stat-item">
-          <div class="sidebar-stat-value">{{ user.completedChallenges }}</div>
+          <div class="sidebar-stat-value">{{ totalCompletedChallengesCount }}</div>
           <div class="sidebar-stat-label">완료</div>
         </div>
       </div>
     </div>
     <div class="sidebar-points">
-      <div class="sidebar-points-value">{{ user.points }} P</div>
+      <div class="sidebar-points-value">{{ userProfile && userProfile.points }} P</div>
       <div class="sidebar-points-label">획득한 포인트</div>
     </div>
     <ul class="sidebar-menu">
@@ -28,27 +29,34 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
-  name: 'Sidebar',
-  data() {
-    return {
-      user: {
-        name: '홍길동',
-        email: 'hong@example.com',
-        profileImage: 'https://source.unsplash.com/random/100x100?portrait',
-        totalChallenges: 15,
-        completedChallenges: 10,
-        currentStreak: 7,
-        points: 3500,
-      }
+  name: 'ChallengeSideBar',
+
+  computed: {
+    ...mapGetters(['userProfile', 'totalChallengesCount', 'totalCompletedChallengesCount']),
+    profileImageUrl() {
+      const baseURL = 'https://bodchallenge.s3.ap-northeast-2.amazonaws.com/';
+      return this.userProfile && this.userProfile.image
+          ? `${baseURL}${this.userProfile.image}`
+          : 'https://source.unsplash.com/random/200x200?portrait';
     }
   },
   methods: {
-    isActive(path) {
-      return this.$route.path === path;
+    ...mapActions(['fetchUserProfile', 'fetchTotalChallengesCount', 'fetchTotalCompletedChallengesCount']),
+    isActive(route) {
+      return this.$route.path === route;
+    },
+  },
+  created() {
+    if (!this.userProfile) {
+      this.fetchUserProfile();
+      this.fetchTotalChallengesCount();
+      this.fetchTotalCompletedChallengesCount();
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -156,4 +164,13 @@ export default {
 .sidebar-menu a.active {
   background-color: rgba(255, 255, 255, 0.2);
 }
+
+.sidebar-profile-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
 </style>

@@ -1,17 +1,17 @@
 <template>
   <div id="app" class="app-container">
     <main class="main-content">
-      <ChallengeSideBar />
+      <ChallengeSideBar @edit-profile="showProfileEditModal = true" @profile-updated="updateUserProfile"/>
       <div class="container">
         <h1>나의 챌린지 현황</h1>
         <div class="kanban-board">
           <div class="kanban-column">
             <h2>시작 전</h2>
             <div v-for="challenge in beforeChallenges" :key="challenge.challengeId" class="kanban-card">
-              <img src="{{ challenge.image }}" alt="명상 챌린지" class="kanban-card-image">
+              <img :src="challenge.image" alt="명상 챌린지" class="kanban-card-image">
               <div class="kanban-card-title">{{ challenge.title }}</div>
               <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
-<!--              <a :href="'/challenge/' + challenge.challengeId" class="btn">상세보기</a>-->
+              <!-- <a :href="'/challenge/' + challenge.challengeId" class="btn">상세보기</a> -->
             </div>
           </div>
           <div class="kanban-column">
@@ -32,7 +32,7 @@
               <div class="kanban-card-title">{{ challenge.title }}</div>
               <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
               <div>완료일: {{ formatDate(challenge.createAt) }}</div>
-<!--              <a :href="'/challenge/' + challenge.challengeId" class="btn">결과보기</a>-->
+              <!-- <a :href="'/challenge/' + challenge.challengeId" class="btn">결과보기</a> -->
             </div>
           </div>
         </div>
@@ -44,38 +44,37 @@
         :token="userToken"
         @close="showVerificationModal = false"
     />
+    <ProfileEditModal
+        v-if="showProfileEditModal"
+        :userProfile="userProfile"
+        @close="showProfileEditModal = false"
+        @profile-updated="updateUserProfile"
+    />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import VerificationModal from '@/components/VerificationFrom.vue';
-import ChallengeSideBar from "@/components/ChallengeSideBar.vue";
+import ChallengeSideBar from '@/components/ChallengeSideBar.vue';
+import ProfileEditModal from '@/components/ProfileEditModal.vue';
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: 'ChallengeMyPage',
   components: {
     VerificationModal,
-    ChallengeSideBar
+    ChallengeSideBar,
+    ProfileEditModal
   },
   data() {
     return {
-      user: {
-        name: '홍길동',
-        email: 'hong@example.com',
-        profileImage: 'https://source.unsplash.com/random/100x100?portrait',
-        totalChallenges: 15,
-        completedChallenges: 10,
-        currentStreak: 7,
-        points: 3500,
-      },
-      ongoingChallenges: [],
-      completedChallenges: [],
-      beforeChallenges: [],
       showVerificationModal: false,
+      showProfileEditModal: false,
       selectedChallengeId: null,
-      userToken: localStorage.getItem('accessToken')
     };
+  },
+  computed: {
+    ...mapGetters(['userProfile'])
   },
   async created() {
     try {
@@ -85,7 +84,9 @@ export default {
       alert('데이터를 가져오는 중 오류가 발생했습니다.');
     }
   },
+
   methods: {
+    ...mapActions(['fetchUserProfile', 'fetchTotalChallengesCount', 'fetchTotalCompletedChallengesCount']),
     async fetchChallenges() {
       try {
         const token = this.userToken;
@@ -120,7 +121,7 @@ export default {
       }
     },
     formatDate(dateString) {
-      const options = {year: 'numeric', month: 'short', day: 'numeric'};
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString(undefined, options);
     },
     isActive(path) {
@@ -129,6 +130,16 @@ export default {
     openVerificationModal(challengeId) {
       this.selectedChallengeId = challengeId;
       this.showVerificationModal = true;
+    },
+    async updateUserProfile() {
+      try {
+        await this.fetchUserProfile();
+        await this.fetchTotalChallengesCount();
+        await this.fetchTotalCompletedChallengesCount();
+      } catch (error) {
+        console.error('Profile update failed:', error);
+        alert('프로필 업데이트 중 오류가 발생했습니다.');
+      }
     }
   }
 };
