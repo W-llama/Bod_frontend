@@ -4,12 +4,15 @@ import UserComponent from '../views/SignUp.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
 import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
-import ChangePassword from "@/views/ChangePassword.vue";
-import Verification from "@/components/VerificationFrom.vue";
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
-import MyPage from "@/views/MyPage.vue";
+
+import Verification from "@/components/myPage/VerificationModal.vue";
+import MyPage from "@/views/myPage/MyPage.vue";
+import MyPagePassword from "@/views/myPage/MyPagePassword.vue";
+
 import AdminUsers from "@/views/AdminUsers.vue";
 import VerificationList from "@/components/VerificationList.vue";
+
 
 const routes = [
   {
@@ -39,17 +42,17 @@ const routes = [
     component: AdminView
   },
   {
-    path: '/myPage',
+    path: '/myPage/myPage',
     name: 'myPage',
     component: MyPage
   },
   {
-    path: '/changePassword',
-    name: 'changePassword',
-    component: ChangePassword
+    path: '/myPage/myPagePassword',
+    name: 'myPagePassword',
+    component: MyPagePassword
   },
   {
-    path: '/challenges/:challengeId/verify',
+    path: '/myPage/challenges/:challengeId/verify',
     name: 'VerificationModal',
     component: Verification,
     props: true

@@ -6,7 +6,7 @@
           <div class="nav-links">
             <router-link to="/">홈</router-link>
             <router-link to="/challenges">챌린지 참여하기</router-link>
-            <router-link to="/myPage">마이페이지</router-link>
+            <router-link to="/myPage/myPage">마이페이지</router-link>
             <router-link to="/admin" @click.native.prevent="checkAdminAccess">관리자페이지</router-link>
           </div>
           <div class="auth-buttons">
@@ -48,9 +48,6 @@ export default {
     handleLoginSuccess() {
       this.showLoginModal = false;
       this.$store.commit('setAuthenticated', true);
-    },
-    checkAdminAccess() {
-        alert('관리자만 이용이 가능한 페이지입니다.');
     },
   },
   created() {

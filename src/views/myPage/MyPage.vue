@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app-container">
     <main class="main-content">
-      <ChallengeSideBar @edit-profile="showProfileEditModal = true" @profile-updated="updateUserProfile" />
+      <MyPageSlideBar @edit-profile="showProfileEditModal = true" @profile-updated="updateUserProfile" />
       <div class="container">
         <h1>나의 챌린지 현황</h1>
         <div class="kanban-board">
@@ -38,12 +38,11 @@
         </div>
       </div>
     </main>
-    <VerificationModal
-        v-if="showVerificationModal"
-        :challengeId="selectedChallengeId"
-        @modal-closed="handleModalClosed"
-        @verification-submitted="refreshData"
-    />
+    <VerificationModal v-if="showVerificationModal"
+                       :challengeId="selectedChallengeId"
+                       :token="userToken"
+                       @close="showVerificationModal = false" />
+
     <ProfileEditModal v-if="showProfileEditModal"
                       @close="showProfileEditModal = false"
                       @profile-updated="updateUserProfile" />
@@ -51,17 +50,17 @@
 </template>
 
 <script>
-import ChallengeSideBar from '@/components/ChallengeSideBar.vue';
-import VerificationModal from '@/components/VerificationFrom.vue';
-import ProfileEditModal from '@/components/ProfileEditModal.vue';
-import { mapActions } from 'vuex';
+import VerificationModal from '@/components/myPage/VerificationModal.vue';
+import MyPageSlideBar from '@/components/myPage/MyPageSideBar.vue';
+import ProfileEditModal from '@/components/myPage/ProfileEditModal.vue';
+import { mapActions} from 'vuex';
 import axios from 'axios';
 
 export default {
   name: 'ChallengeMyPage',
   components: {
-    ChallengeSideBar,
     VerificationModal,
+    MyPageSlideBar,
     ProfileEditModal,
   },
   data() {
@@ -112,12 +111,6 @@ export default {
         alert('프로필 업데이트 중 오류가 발생했습니다.');
       }
     },
-    async handleModalClosed() {
-      await this.fetchChallenges();
-    },
-    async refreshData() {
-      await this.fetchChallenges();
-    },
   },
 };
 </script>
@@ -149,7 +142,7 @@ html {
   padding: 2rem 1rem;
   color: white;
   position: fixed; /* Fixed position */
-  height: calc(100vh - 5rem); /* Full height minus header height */
+  height: calc(100vh - 15rem); /* Full height minus header height */
   top: 4rem; /* Start below the header */
   left: 0;
   z-index: 1000; /* Ensure it stays above content */
