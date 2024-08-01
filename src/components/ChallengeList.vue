@@ -14,7 +14,12 @@
     </div>
 
     <div class="challenges">
-      <div v-for="challenge in paginatedChallenges" :key="challenge.id" class="challenge-card" @click="viewChallengeDetails(challenge.id)">
+      <div
+          v-for="challenge in paginatedChallenges"
+          :key="challenge.id"
+          class="challenge-card"
+          @click="viewChallengeDetails(challenge.id)"
+      >
         <img :src="challenge.imageUrl" :alt="challenge.title" class="challenge-image">
         <div class="challenge-content">
           <h2 class="challenge-title">{{ challenge.title }}</h2>
@@ -24,9 +29,12 @@
     </div>
 
     <div class="pagination">
-      <button v-for="pageNumber in totalPages" :key="pageNumber"
-              @click="fetchChallenges(pageNumber)"
-              :class="{ active: currentPage === pageNumber }">
+      <button
+          v-for="pageNumber in totalPages"
+          :key="pageNumber"
+          @click="fetchChallenges(pageNumber)"
+          :class="{ active: currentPage === pageNumber }"
+      >
         {{ pageNumber }}
       </button>
     </div>
@@ -44,42 +52,41 @@ export default {
       selectedCategory: '전체',
       challenges: [],
       currentPage: 1,
-      itemsPerPage: 6,
+      itemsPerPage: 9,
+      totalPages: 0
     };
   },
   mounted() {
+    console.log('Mounted, fetching challenges for page:', this.currentPage);
     this.fetchChallenges(this.currentPage);
   },
   computed: {
-    filteredChallenges() {
-      if (this.selectedCategory === '전체') {
-        return this.challenges;
-      }
-      return this.challenges.filter(challenge => challenge.category === this.mapCategoryToBackendEnum(this.selectedCategory));
-    },
     paginatedChallenges() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.filteredChallenges.slice(start, end);
-    },
-    totalPages() {
-      return Math.ceil(this.filteredChallenges.length / this.itemsPerPage);
+      console.log('Paginated Challenges:', this.challenges.slice(start, end));
+      return this.challenges.slice(start, end);
     }
   },
   methods: {
     fetchChallenges(pageNumber) {
+      this.currentPage = pageNumber;
+      const zeroBasedPageNumber = pageNumber - 1;
+
       let apiUrl = '';
       if (this.selectedCategory === '전체') {
-        apiUrl = `http://localhost:8080/api/challenges?page=${pageNumber}`;
+        apiUrl = `http://localhost:8080/api/challenges?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}`;
       } else {
         const categoryEnum = this.mapCategoryToBackendEnum(this.selectedCategory);
-        apiUrl = `http://localhost:8080/api/challenges/category?page=${pageNumber}&category=${categoryEnum}`;
+        apiUrl = `http://localhost:8080/api/challenges/category?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}&category=${categoryEnum}`;
       }
 
       axios.get(apiUrl)
       .then(response => {
-        this.challenges = response.data.data;
-        this.currentPage = pageNumber;
+        console.log('API Response:', response.data);
+        this.challenges = response.data.data.content;
+        this.totalPages = response.data.data.totalPages;
+        console.log('Challenges:', this.challenges); // Check if challenges are updated correctly
       })
       .catch(error => {
         console.error('Error fetching challenges:', error);
@@ -92,18 +99,12 @@ export default {
     },
     mapCategoryToBackendEnum(category) {
       switch (category) {
-        case '건강':
-          return 'HEALTH';
-        case '공부':
-          return 'STUDY';
-        case '취미':
-          return 'HOBBY';
-        case '경제':
-          return 'ECONOMY';
-        case '기타':
-          return 'ETC';
-        default:
-          return '';
+        case '건강': return 'HEALTH';
+        case '공부': return 'STUDY';
+        case '취미': return 'HOBBY';
+        case '경제': return 'ECONOMY';
+        case '기타': return 'ETC';
+        default: return '';
       }
     },
     viewChallengeDetails(challengeId) {
@@ -168,7 +169,7 @@ h1 {
   max-width: calc(32% - 20px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  height: 300px; /* Increased height */
+  height: 330px; /* Increased height */
 }
 
 @media (max-width: 1024px) {
