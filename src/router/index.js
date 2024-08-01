@@ -4,10 +4,10 @@ import UserComponent from '../views/SignUp.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
 import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
-import MyPage from "@/views/MyPage.vue";
 import ChangePassword from "@/views/ChangePassword.vue";
 import Verification from "@/components/VerificationFrom.vue";
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
+import ChallengeMyPage from "@/components/ChallengeMyPage.vue";
 
 const routes = [
   {
@@ -39,7 +39,7 @@ const routes = [
   {
     path: '/myPage',
     name: 'myPage',
-    component: MyPage
+    component: ChallengeMyPage
   },
   {
     path: '/changePassword',

@@ -5,11 +5,11 @@
         <form class="verification-form" @submit.prevent="submitVerification">
           <div class="form-group">
             <label for="verification-title">인증 제목</label>
-            <input type="text" id="verification-title" v-model="verificationTitle" placeholder="오늘의 인증 제목을 입력하세요" required>
+            <input type="text" id="verification-title" v-model="verificationTitle" placeholder="오늘의 인증 제목을 입력하세요" required />
           </div>
           <div class="form-group">
             <label for="verification-image">인증 사진 업로드</label>
-            <input type="file" id="verification-image" @change="handleFileUpload" accept="image/*" required>
+            <input type="file" id="verification-image" @change="handleFileUpload" accept="image/*" required />
           </div>
           <div class="form-group">
             <label for="verification-content">인증 내용</label>
@@ -25,61 +25,72 @@
 <script>
 export default {
   props: ['challengeId'],
-
   data() {
     return {
-      showModal: true, // Initially true to show modal
+      showModal: true,
       verificationTitle: '',
       verificationContent: '',
-      verificationImage: null
+      verificationImage: null,
+      token: this.getToken()
     };
   },
-
   methods: {
+    getToken() {
+      const tokenWithPrefix = localStorage.getItem('accessToken')?.trim();
+      return tokenWithPrefix ? tokenWithPrefix.replace('Bearer ', '').trim() : '';
+    },
     closeModal() {
       this.showModal = false;
-      this.$emit('close'); // Emit close event to parent component
+      this.$emit('close');
     },
-
     handleFileUpload(event) {
       this.verificationImage = event.target.files[0];
     },
-
-    submitVerification() {
+    async submitVerification() {
       if (!this.challengeId) {
         console.error('challengeId is not defined.');
         return;
       }
 
-      let formData = new FormData();
-      formData.append('image', this.verificationImage);
-      formData.append('request', JSON.stringify({
-        title: this.verificationTitle,
-        content: this.verificationContent
-      }));
+      try {
+        let formData = new FormData();
+        formData.append('image', this.verificationImage);
 
-      fetch(`http://localhost:8080/api/challenges/${this.challengeId}/verifications`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Authorization': `Bearer ${token}`
+        const requestDto = {
+          title: this.verificationTitle,
+          content: this.verificationContent
+        };
+        formData.append('request', new Blob([JSON.stringify(requestDto)], { type: 'application/json' }));
+
+        const response = await fetch(`http://localhost:8080/api/challenges/${this.challengeId}/verifications`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': `Bearer ${this.token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      })
-      .then(response => response.json())
-      .then(data => {
+        const data = await response.json();
+        alert("챌린지 인증이 정상적으로 처리되었습니다.");
         console.log('Verification submitted successfully:', data);
         this.closeModal();
         this.verificationTitle = '';
         this.verificationContent = '';
         this.verificationImage = null;
-      })
-      .catch(error => {
+      } catch (error) {
+        alert("챌린지 인증 중에 오류가 발생했습니다.");
         console.error('Error submitting verification:', error);
-      });
+      }
     }
   }
 };
 </script>
+
+
+
 <style scoped>
 .modal-overlay {
   position: fixed;
