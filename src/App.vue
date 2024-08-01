@@ -1,25 +1,32 @@
 <template>
   <div id="app">
-    <main>
-      <router-view></router-view> <!-- 라우터 뷰 추가 -->
-    </main>
+    <Header />
+    <Footer />
   </div>
+  <LoginModal v-if="showLoginModal" @close="showLoginModal = false" @login-success="handleLoginSuccess" />
 </template>
 
 <script>
+import Header from "@/components/Header.vue";
+import LoginModal from "@/components/Login.vue";
+import Footer from "@/components/Footer.vue";
+
 export default {
   name: 'App',
+  components: {Footer, LoginModal, Header},
   data() {
     return {
-      // 전역 상태를 여기에 추가할 수 있습니다
+      showLoginModal: false,
     }
   },
   methods: {
-    // 전역 메서드를 여기에 추가할 수 있습니다
+    handleLoginSuccess() {
+      this.showLoginModal = false;
+      alert('로그인 성공!');
+    }
   }
 }
 </script>
-
 
 
 

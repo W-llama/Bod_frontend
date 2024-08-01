@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Header />
     <main>
       <div class="container">
         <div class="challenge-header">
@@ -50,7 +49,6 @@
         </div>
       </div>
     </main>
-    <Footer />
   </div>
 </template>
 
