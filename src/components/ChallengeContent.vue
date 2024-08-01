@@ -18,7 +18,7 @@
               <p>{{ challenge.content }}</p>
             </div>
 
-            <ChallengeVerifications :verifications="verifications" />
+            <ChallengeVerifications :verifications="verifications"/>
           </div>
 
           <div class="challenge-sidebar">
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import {mapGetters} from 'vuex';
 import axios from 'axios';
 import ChallengeVerifications from './ChallengeVerification.vue';
 import Header from "@/components/Header.vue";
@@ -95,7 +95,7 @@ export default {
         this.challenge = response.data.data;
         this.fetchVerifications(challengeId);
         this.fetchParticipants(challengeId);
-        this.fetchTop3Users(challengeId); // Fetch top 3 users after fetching other data
+        this.fetchTop3Users(challengeId);
       })
       .catch(error => {
         console.error('Error fetching challenge details:', error);
@@ -147,17 +147,28 @@ export default {
         console.log('챌린지 신청: ', response.data);
         this.$router.go();
       } catch (error) {
-        alert('이미 참여하신 챌린지이거나 일시적 서버오류로 실패하였습니다.');
+        if (error.response) {
+          const status = error.response.status;
+          if (status === 409) {
+            alert('이미 신청하신 챌린지입니다.');
+          } else if (status === 400) {
+            alert('마감된 챌린지로 참여할 수 없습니다.');
+          } else {
+            alert('알 수 없는 오류가 발생했습니다. 나중에 다시 시도해 주세요.');
+          }
+        } else {
+          alert('서버와의 연결에 문제가 발생했습니다.');
+        }
       }
     },
-    },
-    computed: {
-      ...mapGetters(['accessToken'])
-    },
-    created() {
-      const challengeId = this.$route.params.challengeId;
-      this.fetchChallengeDetails(challengeId);
-    }
+  },
+  computed: {
+    ...mapGetters(['accessToken'])
+  },
+  created() {
+    const challengeId = this.$route.params.challengeId;
+    this.fetchChallengeDetails(challengeId);
+  }
 };
 </script>
 
