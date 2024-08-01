@@ -3,11 +3,12 @@ import HomeView from '../views/Home.vue';
 import UserComponent from '../views/SignUp.vue';
 import ChallengeDetails from '../components/ChallengeContent.vue';
 import ChallengeList from "@/components/ChallengeList.vue";
-import AdminView from '../views/Admin.vue'
+import AdminView from '../views/Admin.vue';
 import MyPage from "@/views/MyPage.vue";
 import ChangePassword from "@/views/ChangePassword.vue";
 import Verification from "@/components/VerificationFrom.vue";
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
+import AdminUsers from "@/views/AdminUsers.vue";
 
 const routes = [
   {
@@ -57,7 +58,12 @@ const routes = [
     name: 'adminChallengeDetail',
     component: AdminChallengeDetail,
     props: true
-  }
+  },
+  {
+    path: '/admin/users',
+    name: 'adminUsers',
+    component: AdminUsers
+  },
 ];
 
 const router = createRouter({
