@@ -1,5 +1,4 @@
 <template>
-  <Header />
   <div class="container">
     <h1>챌린지 카테고리</h1>
 
@@ -32,17 +31,13 @@
       </button>
     </div>
   </div>
-  <Footer />
 </template>
 
 <script>
 import axios from 'axios';
-import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
 
 export default {
   name: 'ChallengeList',
-  components: { Header, Footer },
   data() {
     return {
       backendCategories: ['전체', '건강', '공부', '취미', '경제', '기타'],

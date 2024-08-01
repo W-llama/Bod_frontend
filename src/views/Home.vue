@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <Header />
     <HeroSection />
     <ChallengeCard />
-    <Footer />
   </div>
   <LoginModal v-if="showLoginModal" @close="showLoginModal = false" @login-success="handleLoginSuccess" />
 
