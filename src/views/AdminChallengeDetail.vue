@@ -4,7 +4,6 @@
       <header class="header">
         <h1 class="page-title">관리자 챌린지 상세페이지</h1>
         <div class="user-info">
-          <img src="https://i.pravatar.cc/150?img=68" alt="User Avatar" class="user-avatar">
           <span>관리자님, 안녕하세요!</span>
         </div>
       </header>
@@ -32,11 +31,11 @@
           </div>
           <div class="info-item">
             <div class="info-label">시작일</div>
-            <div class="info-value">{{ challengeInfo.startTime || '데이터 없음' }}</div>
+            <div class="info-value">{{ formatDate(challengeInfo.startTime) || '데이터 없음' }}</div>
           </div>
           <div class="info-item">
             <div class="info-label">종료일</div>
-            <div class="info-value">{{ challengeInfo.endTime || '데이터 없음' }}</div>
+            <div class="info-value">{{ formatDate(challengeInfo.endTime) || '데이터 없음' }}</div>
           </div>
         </div>
         <div class="challenge-content">
@@ -62,7 +61,7 @@
           <tbody>
           <tr v-for="record in certificationRecords" :key="record.id">
             <td>{{ record.user }}</td>
-            <td>{{ record.createdAt }}</td>
+            <td>{{ formatDate(record.createdAt) }}</td>
             <td><img :src="record.image" alt="Certification Image" class="certification-image"></td>
             <td>{{ record.title }}</td>
             <td>{{ record.status }}</td>
@@ -158,6 +157,9 @@ export default {
       } catch (error) {
         console.error('Error rejecting certification record:', error);
       }
+    },
+    formatDate(dateString) {
+      return new Date(dateString).toLocaleDateString();
     }
   },
   created() {

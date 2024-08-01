@@ -12,13 +12,23 @@
           <label for="title">내용</label>
           <input type="text" v-model="localChallenge.content" id="content" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="category">카테고리</label>
-          <input type="text" v-model="localChallenge.category" id="category" required />
+          <select id="category" v-model="localChallenge.category">
+            <option value="HEALTH">HEALTH</option>
+            <option value="STUDY">STUDY</option>
+            <option value="HOBBY">HOBBY</option>
+            <option value="ECONOMY">ECONOMY</option>
+            <option value="ETC">ETC</option>
+          </select>
         </div>
-        <div>
+        <div class="form-group">
           <label for="conditionStatus">상태</label>
-          <input type="text" v-model="localChallenge.conditionStatus" id="conditionStatus" required />
+          <select id="conditionStatus" v-model="localChallenge.conditionStatus">
+            <option value="BEFORE">BEFORE</option>
+            <option value="TODO">TODO</option>
+            <option value="COMPLETE">COMPLETE</option>
+          </select>
         </div>
         <div>
           <label for="startTime">시작일</label>
@@ -123,6 +133,13 @@ export default {
 
 form div {
   margin-bottom: 1rem;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0; /* gray-300 */
+  border-radius: 0.375rem;
 }
 
 label {

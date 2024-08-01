@@ -5,10 +5,20 @@
       <nav>
         <ul class="nav-menu">
           <li class="nav-item">
-            <a href="#" class="nav-link" :class="{ active: isActive('dashboard') }" @click="setActive('dashboard')">대시보드</a>
+            <router-link
+                to="/admin"
+                class="nav-link"
+                :class="{ active: isActive('dashboard') }"
+                @click.native="setActive('dashboard')"
+            >대시보드</router-link>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" :class="{ active: isActive('members') }" @click="setActive('members')">회원 관리</a>
+            <router-link
+                to="/admin/users"
+                class="nav-link"
+                :class="{ active: isActive('members') }"
+                @click.native="setActive('members')"
+            >회원 관리</router-link>
           </li>
         </ul>
       </nav>
@@ -18,7 +28,6 @@
       <header class="header">
         <h1 class="page-title">대시보드</h1>
         <div class="user-info">
-          <img src="https://i.pravatar.cc/150?img=68" alt="User Avatar" class="user-avatar">
           <span>관리자님, 안녕하세요!</span>
         </div>
       </header>
@@ -33,11 +42,12 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">챌린지 관리</h2>
-          <div class="search-bar">
-            <input type="text" v-model="searchQuery" placeholder="챌린지 검색" class="search-input">
-            <button @click="searchChallenges" class="search-btn">검색</button>
-          </div>
         </div>
+        <div class="search-bar">
+          <input type="text" v-model="searchQuery" placeholder="챌린지 제목으로 검색" class="search-input">
+          <button class="search-btn" @click="searchChallenges">검색</button>
+        </div>
+
 
         <table>
           <thead>
@@ -336,9 +346,12 @@ body {
   margin-right: 0.5rem;
 }
 
+
+
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, minmax(100px, 1fr));
   gap: 1rem;
 }
 
@@ -348,6 +361,7 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   text-align: center;
+
 }
 
 .stat-value {
@@ -365,6 +379,8 @@ body {
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  font-size: 0.70rem;
 }
 
 .card-header {
@@ -376,38 +392,46 @@ body {
 
 .card-title {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .search-bar {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  height: 30px;
 }
 
 .search-input {
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 0.25rem;
-  width: 200px;
+  border: 1px solid #e2e8f0; /* gray-300 */
+  border-radius: 0.375rem;
+  flex-grow: 1;
   margin-right: 0.5rem;
 }
 
 .search-btn {
-  background-color: #4a5568;
-  color: white;
+  background-color: #667eea; /* primary-color */
+  color: #ffffff; /* white */
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.375rem;
   cursor: pointer;
+  transition: all 0.3s ease; /* transition */
+  line-height: 1.5; /* 텍스트 라인 높이 설정 */
+  display: inline-flex; /* 버튼을 인라인 플렉스로 설정 */
+  align-items: center; /* 아이템들을 수직으로 가운데 정렬 */
+  white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
 }
 
 .search-btn:hover {
-  background-color: #2d3748;
+  background-color: #764ba2; /* secondary-color */
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 1rem;
 }
 
 th, td {
@@ -424,10 +448,11 @@ th {
   background-color: #3182ce;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   border-radius: 0.25rem;
   cursor: pointer;
   margin-right: 0.5rem;
+  font-size: 0.70rem;
 }
 
 .btn:hover {

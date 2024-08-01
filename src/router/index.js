@@ -8,6 +8,7 @@ import ChangePassword from "@/views/ChangePassword.vue";
 import Verification from "@/components/VerificationFrom.vue";
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
 import ChallengeMyPage from "@/components/ChallengeMyPage.vue";
+import AdminUsers from "@/views/AdminUsers.vue";
 
 const routes = [
   {
@@ -57,7 +58,12 @@ const routes = [
     name: 'adminChallengeDetail',
     component: AdminChallengeDetail,
     props: true
-  }
+  },
+  {
+    path: '/admin/users',
+    name: 'adminUsers',
+    component: AdminUsers
+  },
 ];
 
 const router = createRouter({
