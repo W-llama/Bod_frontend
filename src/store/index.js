@@ -9,7 +9,6 @@ export default createStore({
     refreshToken: null,
     totalChallengesCount: null,
     totalCompletedChallengesCount: null,
-    totalChallengeList: null,
   },
   getters: {
     isAuthenticated: state => state.isAuthenticated,
@@ -17,7 +16,6 @@ export default createStore({
     accessToken: state => state.accessToken,
     totalChallengesCount: state => state.totalChallengesCount,
     totalCompletedChallengesCount: state => state.totalCompletedChallengesCount,
-    totalChallengeList: state => state.totalChallengeList,
   },
   mutations: {
     setAuthenticated(state, status) {
@@ -35,9 +33,6 @@ export default createStore({
     },
     setTotalCompletedChallengesCount(state, count) { // 수정된 메서드 이름
       state.totalCompletedChallengesCount = count;
-    },
-    setTotalChallengeList(state, list) {
-      state.totalChallengeList = list;
     },
     clearAuth(state) {
       state.isAuthenticated = false;
@@ -167,20 +162,6 @@ export default createStore({
         console.log('완료한 챌린지들의 갯수 가져오는 것을 실패:', error);
       }
     },
-    async fetchTotalChallengeList({ commit }) { // 수정된 메서드 이름
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.get('/users/profile/challenges', {
-          headers: {
-            Authorization: accessToken,
-          },
-        });
-        commit('setTotalChallengeList', response.data.data);
-      } catch (error) {
-        console.log('완료한 챌린지들을 가져오는 것을 실패:', error);
-      }
-    },
-
     async fetchToken({ commit }) {
       try {
         const token = localStorage.getItem('accessToken');

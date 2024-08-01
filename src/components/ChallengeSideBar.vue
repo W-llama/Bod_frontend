@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="sidebar-points">
-      <div class="sidebar-points-value">{{ userProfile && userProfile.points }} P</div>
+      <div class="sidebar-points-value">{{ userProfile && userProfile.points }}</div>
       <div class="sidebar-points-label">획득한 포인트</div>
     </div>
     <ul class="sidebar-menu">
@@ -97,7 +97,7 @@ export default {
   margin-bottom: 0.5rem;
 }
 
-.sidebar-profile-email {
+.sidebar-profile-introduce {
   font-size: 0.9rem;
   opacity: 0.8;
   margin-bottom: 1rem;

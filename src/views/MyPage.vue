@@ -1,22 +1,22 @@
 <template>
   <div id="app" class="app-container">
     <main class="main-content">
-      <ChallengeSideBar @edit-profile="showProfileEditModal = true" @profile-updated="updateUserProfile"/>
+      <ChallengeSideBar @edit-profile="showProfileEditModal = true" @profile-updated="updateUserProfile" />
       <div class="container">
         <h1>나의 챌린지 현황</h1>
         <div class="kanban-board">
           <div class="kanban-column">
             <h2>시작 전</h2>
             <div v-for="challenge in beforeChallenges" :key="challenge.challengeId" class="kanban-card">
-              <img :src="challenge.image" alt="명상 챌린지" class="kanban-card-image">
+              <img :src="challenge.image" alt="카드 이미지" class="kanban-card-image" />
               <div class="kanban-card-title">{{ challenge.title }}</div>
               <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
-              <!-- <a :href="'/challenge/' + challenge.challengeId" class="btn">상세보기</a> -->
             </div>
           </div>
           <div class="kanban-column">
             <h2>진행 중</h2>
             <div v-for="challenge in ongoingChallenges" :key="challenge.challengeId" class="kanban-card">
+              <img :src="challenge.image" alt="카드 이미지" class="kanban-card-image" />
               <div class="kanban-card-title">{{ challenge.title }}</div>
               <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
               <div class="kanban-card-progress">
@@ -29,27 +29,23 @@
           <div class="kanban-column">
             <h2>완료</h2>
             <div v-for="challenge in completedChallenges" :key="challenge.challengeId" class="kanban-card">
+              <img :src="challenge.image" alt="카드 이미지" class="kanban-card-image" />
               <div class="kanban-card-title">{{ challenge.title }}</div>
               <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
               <div>완료일: {{ formatDate(challenge.createAt) }}</div>
-              <!-- <a :href="'/challenge/' + challenge.challengeId" class="btn">결과보기</a> -->
             </div>
           </div>
         </div>
       </div>
     </main>
-    <VerificationModal
-        v-if="showVerificationModal"
-        :challengeId="selectedChallengeId"
-        :token="userToken"
-        @close="showVerificationModal = false"
-    />
-    <ProfileEditModal
-        v-if="showProfileEditModal"
-        :userProfile="userProfile"
-        @close="showProfileEditModal = false"
-        @profile-updated="updateUserProfile"
-    />
+    <VerificationModal v-if="showVerificationModal"
+                       :challengeId="selectedChallengeId"
+                       :token="userToken"
+                       @close="showVerificationModal = false" />
+
+    <ProfileEditModal v-if="showProfileEditModal"
+                      @close="showProfileEditModal = false"
+                      @profile-updated="updateUserProfile" />
   </div>
 </template>
 
@@ -57,75 +53,51 @@
 import VerificationModal from '@/components/VerificationFrom.vue';
 import ChallengeSideBar from '@/components/ChallengeSideBar.vue';
 import ProfileEditModal from '@/components/ProfileEditModal.vue';
-import {mapActions, mapGetters} from "vuex";
+import { mapActions} from 'vuex';
+import axios from 'axios';
 
 export default {
   name: 'ChallengeMyPage',
   components: {
     VerificationModal,
     ChallengeSideBar,
-    ProfileEditModal
+    ProfileEditModal,
   },
   data() {
     return {
       showVerificationModal: false,
       showProfileEditModal: false,
       selectedChallengeId: null,
+      userToken: localStorage.getItem('accessToken'),
+      beforeChallenges: [],
+      ongoingChallenges: [],
+      completedChallenges: [],
     };
   },
-  computed: {
-    ...mapGetters(['userProfile'])
-  },
   async created() {
-    try {
-      await this.fetchChallenges();
-    } catch (error) {
-      console.error('Data fetching error:', error);
-      alert('데이터를 가져오는 중 오류가 발생했습니다.');
-    }
+    await this.fetchChallenges();
   },
-
   methods: {
-    ...mapActions(['fetchUserProfile', 'fetchTotalChallengesCount', 'fetchTotalCompletedChallengesCount']),
+    ...mapActions(['fetchUserProfile']),
     async fetchChallenges() {
       try {
-        const token = this.userToken;
-        if (typeof token !== 'string' || !/^Bearer\s[\w-]+\.[\w-]+\.[\w-]+$/.test(token)) {
-          console.error('Invalid token format');
-          alert('Invalid token format. Please log in again.');
-          return;
-        }
-        const tokenWithoutPrefix = token.startsWith('Bearer ') ? token.substring(7) : token;
-
+        const accessToken = localStorage.getItem('accessToken');
         const response = await axios.get('http://localhost:8080/api/users/profile/challenges', {
           headers: {
-            Authorization: `Bearer ${tokenWithoutPrefix}`,
-          }
+            Authorization: accessToken,
+          },
         });
-        const data = response.data.data || {};
-        this.completedChallenges = data.completedChallenges?.content || [];
-        this.ongoingChallenges = data.ongoingChallenges?.content || [];
-        this.beforeChallenges = data.beforeChallenges?.content || [];
+        const challengeSlices = response.data.data;
+        this.beforeChallenges = challengeSlices.beforeChallenges.content;
+        this.ongoingChallenges = challengeSlices.ongoingChallenges.content;
+        this.completedChallenges = challengeSlices.completedChallenges.content;
       } catch (error) {
-        if (error.response) {
-          console.error('Error response data:', error.response.data);
-          console.error('Error response status:', error.response.status);
-          alert(`Error: ${error.response.status} - ${error.response.data.message || 'An error occurred'}`);
-        } else if (error.request) {
-          console.error('Error request data:', error.request);
-          alert('No response received from the server. Please try again later.');
-        } else {
-          console.error('Error message:', error.message);
-          alert('An error occurred while making the request.');
-        }
+        console.error('Failed to fetch challenge list:', error);
       }
     },
     formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString(undefined, options);
-    },
-    isActive(path) {
-      return this.$route.path === path;
     },
     openVerificationModal(challengeId) {
       this.selectedChallengeId = challengeId;
@@ -134,19 +106,18 @@ export default {
     async updateUserProfile() {
       try {
         await this.fetchUserProfile();
-        await this.fetchTotalChallengesCount();
-        await this.fetchTotalCompletedChallengesCount();
       } catch (error) {
         console.error('Profile update failed:', error);
         alert('프로필 업데이트 중 오류가 발생했습니다.');
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-body, html {
+body,
+html {
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f4f7f6;
   color: #333;
@@ -225,7 +196,8 @@ header {
 }
 
 /* Typography */
-h1, h2 {
+h1,
+h2 {
   color: white;
   margin-bottom: 1rem;
 }
@@ -262,7 +234,13 @@ h1, h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: move;
 }
-
+.kanban-card-image {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 .kanban-card-title {
   font-size: 1.1rem;
   font-weight: bold;
@@ -313,5 +291,4 @@ progress::-webkit-progress-value {
 .btn:hover {
   background-color: #764ba2;
 }
-
 </style>
