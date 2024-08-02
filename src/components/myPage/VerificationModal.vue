@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import instance from "@/axios";
+
 export default {
   props: ['challengeId'],
   data() {
@@ -63,27 +65,22 @@ export default {
         };
         formData.append('request', new Blob([JSON.stringify(requestDto)], { type: 'application/json' }));
 
-        const response = await fetch(`http://localhost:8080/api/challenges/${this.challengeId}/verifications`, {
-          method: 'POST',
-          body: formData,
+        const response = await instance.post(`/challenges/${this.challengeId}/verifications`, formData, {
           headers: {
-            'Authorization': `Bearer ${this.token}`
+            'Authorization': `Bearer ${this.token}`,
+            'Content-Type': 'multipart/form-data'
           }
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
         alert("챌린지 인증이 정상적으로 처리되었습니다.");
-        console.log('Verification submitted successfully:', data);
+        console.log('Verification submitted successfully:', response.data);
         this.closeModal();
         this.verificationTitle = '';
         this.verificationContent = '';
         this.verificationImage = null;
         this.$emit('verification-submitted');
       } catch (error) {
-        alert("챌린지 인증 중에 오류가 발생했습니다.");
+        alert("챌린지 인증에 실패했습니다.");
         console.error('Error submitting verification:', error);
       }
     }

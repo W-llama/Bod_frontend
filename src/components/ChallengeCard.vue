@@ -24,7 +24,9 @@ export default {
   name: 'ChallengeCard',
   data() {
     return {
-      challenges: []
+      challenges: [],
+      loading: true,
+      error: null
     };
   },
   mounted() {
@@ -32,7 +34,7 @@ export default {
   },
   methods: {
     fetchChallenges() {
-      axios.get('http://localhost:8080/api/challenges/top10')
+      axios.get('/challenges/top10')
       .then(response => {
         this.challenges = response.data.data.map(challenge => ({
           id: challenge.id,
@@ -40,9 +42,12 @@ export default {
           content: challenge.content,
           image: challenge.imageUrl,
         }));
+        this.loading = false;
       })
       .catch(error => {
+        this.error = 'Error fetching challenges';
         console.error('Error fetching challenges:', error);
+        this.loading = false;
       });
     },
     viewChallengeDetails(challengeId) {
@@ -51,7 +56,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .popular-challenges {

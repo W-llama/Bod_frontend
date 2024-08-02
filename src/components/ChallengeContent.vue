@@ -53,8 +53,8 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
-import axios from 'axios';
+import axios from '../axios';
+import { mapGetters } from 'vuex';
 import ChallengeVerifications from './ChallengeVerification.vue';
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
@@ -90,7 +90,7 @@ export default {
       return dateStr.slice(0, 10);
     },
     fetchChallengeDetails(challengeId) {
-      axios.get(`http://localhost:8080/api/challenges/${challengeId}`)
+      axios.get(`/challenges/${challengeId}`)
       .then(response => {
         this.challenge = response.data.data;
         this.fetchVerifications(challengeId);
@@ -102,7 +102,7 @@ export default {
       });
     },
     fetchVerifications(challengeId) {
-      axios.get(`http://localhost:8080/api/challenges/${challengeId}/verifications?page=1`)
+      axios.get(`/challenges/${challengeId}/verifications?page=1`)
       .then(response => {
         this.verifications = response.data.data;
       })
@@ -111,7 +111,7 @@ export default {
       });
     },
     fetchParticipants(challengeId) {
-      axios.get(`http://localhost:8080/api/challenges/${challengeId}/users`)
+      axios.get(`/challenges/${challengeId}/users`)
       .then(response => {
         this.participants = response.data.data;
       })
@@ -120,7 +120,7 @@ export default {
       });
     },
     fetchTop3Users(challengeId) {
-      axios.get(`http://localhost:8080/api/challenges/${challengeId}/verifications/top3users`)
+      axios.get(`/challenges/${challengeId}/verifications/top3users`)
       .then(response => {
         this.topUsers = response.data.data;
       })
@@ -134,13 +134,16 @@ export default {
         if (!this.accessToken) {
           await this.$store.dispatch('fetchToken');
         }
+        const trimmedToken = this.accessToken.trim();
+        const tokenWithBearer = `Bearer ${trimmedToken}`;
+
         const response = await axios.post(
-            `http://localhost:8080/api/challenges/${challengeId}`,
+            `/challenges/${challengeId}`,
             {},
             {
               headers: {
-                Authorization: this.accessToken,
-              },
+                Authorization: tokenWithBearer
+              }
             }
         );
         alert("성공적으로 신청이 완료되었습니다!");
@@ -160,7 +163,7 @@ export default {
           alert('서버와의 연결에 문제가 발생했습니다.');
         }
       }
-    },
+    }
   },
   computed: {
     ...mapGetters(['accessToken'])
