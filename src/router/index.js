@@ -9,9 +9,9 @@ import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
 import Verification from "@/components/myPage/VerificationModal.vue";
 import MyPage from "@/views/myPage/MyPage.vue";
 import MyPagePassword from "@/views/myPage/MyPagePassword.vue";
+import MyPageVerificationList from "@/views/myPage/MyPageVerificationList.vue";
 
 import AdminUsers from "@/views/AdminUsers.vue";
-import VerificationList from "@/components/VerificationList.vue";
 
 
 const routes = [
@@ -42,14 +42,19 @@ const routes = [
     component: AdminView
   },
   {
-    path: '/myPage/myPage',
+    path: '/myPage',
     name: 'myPage',
     component: MyPage
   },
   {
-    path: '/myPage/myPagePassword',
+    path: '/myPage/password',
     name: 'myPagePassword',
     component: MyPagePassword
+  },
+  {
+    path: '/myPage/verificationList',
+    name: 'myPageVerificationList',
+    component: MyPageVerificationList
   },
   {
     path: '/myPage/challenges/:challengeId/verify',
@@ -67,11 +72,6 @@ const routes = [
     path: '/admin/users',
     name: 'adminUsers',
     component: AdminUsers
-  },
-  {
-    path: '/verificationList',
-    component: VerificationList,
-    props: true
   },
 ];
 

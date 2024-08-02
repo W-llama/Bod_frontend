@@ -54,7 +54,7 @@ import VerificationModal from '@/components/myPage/VerificationModal.vue';
 import MyPageSlideBar from '@/components/myPage/MyPageSideBar.vue';
 import ProfileEditModal from '@/components/myPage/ProfileEditModal.vue';
 import { mapActions} from 'vuex';
-import axios from 'axios';
+import axios from "@/axios";
 
 export default {
   name: 'ChallengeMyPage',
@@ -82,7 +82,7 @@ export default {
     async fetchChallenges() {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.get('http://localhost:8080/api/users/profile/challenges', {
+        const response = await axios.get('/users/profile/challenges', {
           headers: {
             Authorization: accessToken,
           },

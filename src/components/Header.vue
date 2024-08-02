@@ -6,8 +6,8 @@
           <div class="nav-links">
             <router-link to="/">홈</router-link>
             <router-link to="/challenges">챌린지 참여하기</router-link>
-            <router-link to="/myPage/myPage">마이페이지</router-link>
-            <router-link to="/admin" @click.native.prevent="checkAdminAccess">관리자페이지</router-link>
+            <router-link to="/myPage">마이페이지</router-link>
+            <router-link to="/admin">관리자페이지</router-link>
           </div>
           <div class="auth-buttons">
             <button v-if="!isAuthenticated" @click="showLoginModal = true" class="btn">로그인</button>
@@ -28,7 +28,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import LoginModal from '../components/Login.vue';
+import LoginModal from '@/components/Login.vue';
 
 export default {
   name: 'Header',
