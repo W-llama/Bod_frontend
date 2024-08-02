@@ -76,7 +76,6 @@ export default {
         if (this.profileData.image) {
           await this.$store.dispatch('updateProfileImage', this.profileData.image);
         }
-        this.$emit('profile-updated');
         this.$emit('close');
       } catch (error) {
         alert('프로필 수정 실패: ' + error.message);
@@ -123,7 +122,7 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* Ensure the modal is above other content */
+  z-index: 1000;
 }
 
 .modal-content {
@@ -132,9 +131,9 @@ export default {
   padding: 20px;
   border-radius: 10px;
   width: 400px;
-  max-width: 80%; /* Make sure the modal doesn't exceed the screen width */
-  max-height: 80%; /* Make sure the modal doesn't exceed the screen height */
-  overflow: auto; /* Enable scrolling if the content overflows */
+  max-width: 80%;
+  max-height: 80%;
+  overflow: auto;
   position: relative;
   box-sizing: border-box;
   color: white;
@@ -214,8 +213,10 @@ button[type="submit"]:hover {
 }
 
 .image-preview img {
-  max-width: 100%;
+  width: 220px;
+  height: 220px;
+  margin-left: 20%;
   margin-top: 10px;
-  border-radius: 5px;
+  border-radius: 50%;
 }
 </style>

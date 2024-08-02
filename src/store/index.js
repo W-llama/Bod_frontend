@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import axios from '@/axios';
+import router from "@/router";
 
 export default createStore({
   state: {
@@ -7,12 +8,14 @@ export default createStore({
     accessToken: '',
     userProfile: null,
     refreshToken: null,
+    PasswordData:null,
     totalChallengesCount: null,
     totalCompletedChallengesCount: null,
   },
   getters: {
     isAuthenticated: state => state.isAuthenticated,
     userProfile: state => state.userProfile,
+    PasswordData: state => state.PasswordData,
     accessToken: state => state.accessToken,
     totalChallengesCount: state => state.totalChallengesCount,
     totalCompletedChallengesCount: state => state.totalCompletedChallengesCount,
@@ -27,6 +30,9 @@ export default createStore({
     },
     setUserProfile(state, profile) {
       state.userProfile = profile;
+    },
+    setNewPassword(state, password) {
+      state.PasswordData = password;
     },
     setTotalChallengesCount(state, count) {
       state.totalChallengesCount = count;
@@ -45,17 +51,25 @@ export default createStore({
       try {
         const response = await axios.post('/login', loginData);
         const accessToken = response.headers['authorization'];
-
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
           commit('setAccessToken', accessToken);
           commit('setAuthenticated', true);
-          alert('로그인이 완료되었습니다.');
         } else {
-          alert('로그인 실패! 액세스 토큰을 받지 못했습니다.');
+          throw new Error('로그인 실패! 액세스 토큰을 받지 못했습니다.');
         }
       } catch (error) {
-        alert('로그인 실패! 오류: ' + error.message);
+        if (error.response) {
+          if (error.response.status === 403) {
+            throw new Error('회원탈퇴한 유저입니다.');
+          } else if (error.response.status === 404) {
+            throw new Error('아이디 또는 비밀번호가 일치하지 않습니다.');
+          } else {
+            throw new Error('로그인 실패! 오류: ' + error.message);
+          }
+        } else {
+          throw new Error('로그인 실패! 오류: ' + error.message);
+        }
       }
     },
     async oauth2Login({ commit }, provider) {
@@ -71,9 +85,33 @@ export default createStore({
         });
         localStorage.removeItem('accessToken');
         commit('clearAuth');
+        await router.push('/');
         alert('로그아웃이 완료되었습니다.');
       } catch (error) {
         alert('로그아웃 실패! 오류: ' + error.message);
+      }
+    },
+    checkAuth({ commit }) {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        commit('setAccessToken', accessToken);
+        commit('setAuthenticated', true);
+      } else {
+        commit('clearAuth');
+      }
+    },
+    async withDraw({ commit }, withDrawData) {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        await axios.delete(`/withdraw?username=${withDrawData.currentUserName}&password=${withDrawData.currentPassword}`, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        localStorage.removeItem('accessToken');
+        alert('회원탈퇴가 완료되었습니다.');
+      } catch (error) {
+        alert('회원탈퇴 실패! 오류: ' + error.message);
       }
     },
     async fetchUserProfile({ commit }) {
@@ -117,23 +155,24 @@ export default createStore({
           },
         });
         commit('setUserProfile', response.data.data);
-        alert('프로필 이미지가 수정되었습니다.');
       } catch (error) {
         console.error('프로필 이미지 수정 실패:', error);
         alert('프로필 이미지 수정 실패: ' + error.message);
       }
     },
-    async changePassword({ commit }, passwordData) {
+    async changePassword({commit}, oldPassword, newPassword) {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        await axios.put('/users/profile/password', passwordData, {
+        const response =await axios.put('/users/profile/password', oldPassword, newPassword, {
           headers: {
             Authorization: accessToken,
           },
         });
-        alert('비밀번호가 성공적으로 변경되었습니다.');
+        commit('setNewPassword', response.data.data);
+        console.log(oldPassword, newPassword);
       } catch (error) {
         console.error('비밀번호 변경 실패:', error);
+        throw error;
       }
     },
     async fetchTotalChallengesCount({ commit }) {
