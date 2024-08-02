@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
@@ -41,7 +42,7 @@ export default {
     },
     closeModal() {
       this.showModal = false;
-      this.$emit('close');
+      this.$emit('modal-closed');
     },
     handleFileUpload(event) {
       this.verificationImage = event.target.files[0];
@@ -80,6 +81,7 @@ export default {
         this.verificationTitle = '';
         this.verificationContent = '';
         this.verificationImage = null;
+        this.$emit('verification-submitted');
       } catch (error) {
         alert("챌린지 인증 중에 오류가 발생했습니다.");
         console.error('Error submitting verification:', error);
@@ -88,8 +90,6 @@ export default {
   }
 };
 </script>
-
-
 
 <style scoped>
 .modal-overlay {

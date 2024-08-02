@@ -9,6 +9,7 @@ import Verification from "@/components/VerificationFrom.vue";
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
 import MyPage from "@/views/MyPage.vue";
 import AdminUsers from "@/views/AdminUsers.vue";
+import VerificationList from "@/components/VerificationList.vue";
 
 const routes = [
   {
@@ -63,6 +64,11 @@ const routes = [
     path: '/admin/users',
     name: 'adminUsers',
     component: AdminUsers
+  },
+  {
+    path: '/verificationList',
+    component: VerificationList,
+    props: true
   },
 ];
 
