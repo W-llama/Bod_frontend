@@ -22,9 +22,8 @@
       <div class="sidebar-points-label">획득한 포인트</div>
     </div>
     <ul class="sidebar-menu">
-      <li><a href="/challenges" :class="{ active: isActive('/challenges') }">비밀번호 변경</a></li>
-      <li><a href="/myPage" :class="{ active: isActive('/myPage') }">챌린지 현황</a></li>
-      <li><a href="/verificationList" :class="{ active: isActive('/verificationList') }">챌린지 인증신청 목록</a></li>
+      <li><a href="/myPage/MyPage" :class="{ active: isActive('/myPage/MyPage') }">챌린지 조회</a></li>
+      <li><a href="/myPage/myPagePassword" :class="{ active: isActive('/myPage/myPagePassword') }">비밀번호 변경</a></li>
       <li><a href="/settings" :class="{ active: isActive('/settings') }">설정</a></li>
     </ul>
   </aside>
@@ -86,8 +85,8 @@ export default {
 }
 
 .sidebar-profile-image {
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
@@ -167,12 +166,22 @@ export default {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.sidebar-profile-image {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 1rem;
+.btn {
+  display: inline-block;
+  background-color: #667eea;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 1rem;
 }
 
+.btn:hover {
+  background-color: #5a67d8;
+}
 </style>
