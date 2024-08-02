@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from '../axios';
 
 export default {
   name: 'ChallengeList',
@@ -59,9 +59,6 @@ export default {
   mounted() {
     this.fetchChallenges(this.currentPage);
   },
-  computed: {
-
-  },
   methods: {
     fetchChallenges(pageNumber) {
       this.currentPage = pageNumber;
@@ -69,10 +66,10 @@ export default {
 
       let apiUrl = '';
       if (this.selectedCategory === '전체') {
-        apiUrl = `http://localhost:8080/api/challenges?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}`;
+        apiUrl = `/challenges?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}`;
       } else {
         const categoryEnum = this.mapCategoryToBackendEnum(this.selectedCategory);
-        apiUrl = `http://localhost:8080/api/challenges/category?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}&category=${categoryEnum}`;
+        apiUrl = `/challenges/category?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}&category=${categoryEnum}`;
       }
 
       axios.get(apiUrl)

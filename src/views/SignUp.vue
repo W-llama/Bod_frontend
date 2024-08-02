@@ -251,10 +251,10 @@ export default {
       return true;
     },
     googleSignUp() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+      window.location.href = 'http://3.37.71.106:8080/oauth2/authorization/google';
     },
     naverSignUp() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/naver';
+      window.location.href = 'http://3.37.71.106:8080/oauth2/authorization/naver';
     }
   }
 };
