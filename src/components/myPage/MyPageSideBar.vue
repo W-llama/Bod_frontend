@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="sidebar-points">
-      <div class="sidebar-points-value">{{ userProfile && userProfile.points }}</div>
+      <div class="sidebar-points-value">{{ userProfile && userProfile.point }}</div>
       <div class="sidebar-points-label">획득한 포인트</div>
     </div>
     <ul class="sidebar-menu">

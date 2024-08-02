@@ -3,37 +3,20 @@
     <HeroSection />
     <ChallengeCard />
   </div>
-  <LoginModal v-if="showLoginModal" @close="showLoginModal = false" @login-success="handleLoginSuccess" />
 
 </template>
 
 <script>
 import HeroSection from "@/components/HeroSection.vue";
 import ChallengeCard from "@/components/ChallengeCard.vue";
-import Footer from "@/components/Footer.vue";
-import LoginModal from '../components/Login.vue';
-import Header from "../components/Header.vue";
 
 export default {
   components: {
-    Header,
-    LoginModal,
     HeroSection,
-    ChallengeCard,
-    Footer
+    ChallengeCard
   },
-  data() {
-    return {
-      showLoginModal: false,
-    }
-  },
-  methods: {
-    handleLoginSuccess() {
-      this.showLoginModal = false;
-      alert('로그인 성공!');
-    }
-  }
 }
+
 </script>
 
 <style scoped>

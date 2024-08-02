@@ -123,7 +123,7 @@ body, html {
 
 .main-content {
   flex-grow: 1;
-  margin-left: 280px; /* 사이드바 너비만큼 마진을 줍니다. */
+  margin-left: 280px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -185,8 +185,8 @@ body, html {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  display: block; /* Make button block element */
-  margin-top: 10px; /* Add margin for spacing */
+  display: block;
+  margin-top: 10px;
   margin-bottom: 5%;
 }
 
@@ -201,10 +201,13 @@ body, html {
 
 .error-message {
   color: red;
+  margin-top: 5px;
+  font-size: 0.9rem;
 }
 
 .success-message {
   color: green;
+  margin-top: 10px;
 }
 
 button {

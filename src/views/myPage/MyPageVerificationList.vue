@@ -9,7 +9,8 @@
         <div v-for="verification in verifications" :key="verification.id" class="verification-item">
           <img :src="verification.verificationImageUrl" alt="챌린지 인증 이미지" class="verification-image">
           <h2 class="verification-title">{{ verification.challengeTitle }}</h2>
-          <p class="verification-date">신청일: {{ formatDate(verification.createdAt) }}</p>
+          <h2 class="verification-status">인증 상태 : {{formatStatus(verification.status)}}</h2>
+          <p class="verification-date">신청일: {{formatDate(verification.createdAt)}}</p>
           <div class="btn-group">
             <button @click="cancelVerification(verification.verificationId)" class="btn">인증취소</button>
           </div>
@@ -90,6 +91,18 @@ export default {
       const [date, time] = dateTimeString.split('T');
       return `${date} ${time.split('.')[0]}`;
     },
+    formatStatus(status) {
+      switch (status) {
+        case 'APPROVE':
+          return '승인';
+        case 'REJECT':
+          return '거절';
+        case 'PENDING':
+          return '대기';
+        default:
+          return status;
+      }
+    },
   }
 };
 </script>
@@ -148,17 +161,21 @@ header {
   justify-content: space-between;
 }
 
-
 .verification-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
-  margin-bottom: 0.3rem;
+  margin-top:1px;
+}
+.verification-status{
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top:1px;
 }
 
 .verification-date {
   font-size: 0.9rem;
   opacity: 0.8;
-  margin-bottom: 0.5rem;
+  margin-top:1px;
 }
 
 .verification-image {
