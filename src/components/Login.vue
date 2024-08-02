@@ -50,7 +50,6 @@ export default {
     ...mapActions(['login', 'oauth2Login']),
     async loginUser() {
       await this.login(this.loginData);
-      this.$emit('login-success'); // 로그인 성공 이벤트 발생
     },
     googleLogin() {
       this.oauth2Login('google');

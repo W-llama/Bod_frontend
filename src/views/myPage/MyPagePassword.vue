@@ -40,7 +40,7 @@ import ProfileEditModal from '@/components/myPage/ProfileEditModal.vue';
 import { mapActions } from 'vuex';
 
 export default {
-  name: 'ChallengeMyPagePassword',
+  name: 'MyPagePassword',
   components: {
     ProfileEditModal,
     MyPageSideBar
@@ -96,6 +96,7 @@ export default {
 .content-wrapper {
   flex-grow: 1;
   display: flex;
+  margin-left: 250px;
   justify-content: center;
   align-items: center;
   padding: 40px;

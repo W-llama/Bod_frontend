@@ -6,10 +6,12 @@ import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
 
-import Verification from "@/components/myPage/VerificationModal.vue";
+
 import MyPage from "@/views/myPage/MyPage.vue";
 import MyPagePassword from "@/views/myPage/MyPagePassword.vue";
 import MyPageVerificationList from "@/views/myPage/MyPageVerificationList.vue";
+import Verification from "@/components/myPage/VerificationModal.vue";
+import MyPageWithDraw from "@/views/myPage/MyPageWithDraw.vue";
 
 import AdminUsers from "@/views/AdminUsers.vue";
 
@@ -55,6 +57,11 @@ const routes = [
     path: '/myPage/verificationList',
     name: 'myPageVerificationList',
     component: MyPageVerificationList
+  },
+  {
+    path: '/myPage/withDraw',
+    name: 'myPageWithDraw',
+    component: MyPageWithDraw
   },
   {
     path: '/myPage/challenges/:challengeId/verify',

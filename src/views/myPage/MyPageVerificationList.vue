@@ -5,15 +5,18 @@
       <header>
         <h1>인증 신청 목록</h1>
       </header>
-      <div class="verification-list">
+      <div class="verification-list" v-if="verifications.length > 0">
         <div v-for="verification in verifications" :key="verification.id" class="verification-item">
           <img :src="verification.verificationImageUrl" alt="챌린지 인증 이미지" class="verification-image">
           <h2 class="verification-title">{{ verification.challengeTitle }}</h2>
-          <p class="verification-date">신청일: {{ verification.createdAt }}</p>
+          <p class="verification-date">신청일: {{ formatDate(verification.createdAt) }}</p>
           <div class="btn-group">
             <button @click="cancelVerification(verification.verificationId)" class="btn">인증취소</button>
           </div>
         </div>
+      </div>
+      <div v-else class="no-verifications">
+        <p>인증 신청한 목록이 없습니다.</p>
       </div>
     </main>
     <ProfileEditModal
@@ -25,13 +28,13 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import {mapActions} from 'vuex';
 import MyPageSideBar from '@/components/myPage/MyPageSideBar.vue';
 import ProfileEditModal from '@/components/myPage/ProfileEditModal.vue';
 import axios from '@/axios';
 
 export default {
-  name: 'VerificationList',
+  name: 'MyPageVerificationList',
   components: {
     ProfileEditModal,
     MyPageSideBar
@@ -82,7 +85,11 @@ export default {
         console.error('Profile update failed:', error);
         alert('프로필 업데이트 중 오류가 발생했습니다.');
       }
-    }
+    },
+    formatDate(dateTimeString) {
+      const [date, time] = dateTimeString.split('T');
+      return `${date} ${time.split('.')[0]}`;
+    },
   }
 };
 </script>
@@ -103,26 +110,15 @@ body, html {
   min-height: 100vh;
 }
 
-.sidebar {
-  width: 280px;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 2rem 1rem;
-  color: white;
-  position: fixed;
-  height: 100vh;
-  overflow-y: auto;
-}
-
 .main-content {
   flex-grow: 1;
-  margin-left: 280px;
+  margin-left: 250px;
   padding: 5rem;
-  max-width: 2000px;
+  max-width: 1200px;
 }
 
 header {
-  background: transparent;
+  background-color: rgba(255, 255, 255, 0.05);
   text-align: center;
   color: white;
   padding: 1rem 0;
@@ -144,26 +140,33 @@ header {
   border-radius: 10px;
   padding: 1.5rem;
   color: white;
+  max-width: 250px;
+  height: 300px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
+
 .verification-title {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 .verification-date {
   font-size: 0.9rem;
   opacity: 0.8;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .verification-image {
   width: 100%;
-  height: 200px;
+  height: auto;
+  max-height: 200px;
   object-fit: cover;
   border-radius: 5px;
-  margin-bottom: 1rem;
 }
 
 .btn-group {
@@ -172,8 +175,6 @@ header {
 }
 
 .btn {
-  flex: 1;
-  display: inline-block;
   background-color: #ffd166;
   color: #333;
   padding: 0.5rem 1rem;
@@ -183,9 +184,16 @@ header {
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-align: center;
+  width: 100%;
 }
 
 .btn:hover {
   background-color: #ffdc80;
+}
+
+.no-verifications {
+  text-align: center;
+  color: white;
+  font-size: 1.2rem;
 }
 </style>

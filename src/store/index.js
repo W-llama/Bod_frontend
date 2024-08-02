@@ -55,7 +55,11 @@ export default createStore({
           alert('로그인 실패! 액세스 토큰을 받지 못했습니다.');
         }
       } catch (error) {
-        alert('로그인 실패! 오류: ' + error.message);
+        if (error.response && error.response.status === 403) {
+          alert('회원탈퇴한 유저입니다.');
+        } else {
+          alert('로그인 실패! 오류: ' + error.message);
+        }
       }
     },
     async oauth2Login({ commit }, provider) {
@@ -74,6 +78,20 @@ export default createStore({
         alert('로그아웃이 완료되었습니다.');
       } catch (error) {
         alert('로그아웃 실패! 오류: ' + error.message);
+      }
+    },
+    async withDraw({ commit }, withDrawData) {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        await axios.delete(`/withdraw?username=${withDrawData.currentUserName}&password=${withDrawData.currentPassword}`, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        localStorage.removeItem('accessToken');
+        alert('회원탈퇴가 완료되었습니다.');
+      } catch (error) {
+        alert('회원탈퇴 실패! 오류: ' + error.message);
       }
     },
     async fetchUserProfile({ commit }) {
@@ -117,7 +135,6 @@ export default createStore({
           },
         });
         commit('setUserProfile', response.data.data);
-        alert('프로필 이미지가 수정되었습니다.');
       } catch (error) {
         console.error('프로필 이미지 수정 실패:', error);
         alert('프로필 이미지 수정 실패: ' + error.message);

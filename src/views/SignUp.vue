@@ -133,7 +133,6 @@ export default {
       if (!this.validatePassword()) {
         return;
       }
-
       try {
         const response = await axios.post('/signup', this.signUpData);
         alert('회원가입 성공!');
