@@ -8,12 +8,24 @@
 <script>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import { mapActions } from 'vuex';
 
 export default {
   name: 'App',
   components: {
-    Footer,
-    Header
+    Header,
+    Footer
+  },
+  data() {
+    return {
+      showLoginModal: false,
+    };
+  },
+  methods: {
+    ...mapActions(['checkAuth']),
+  },
+  created() {
+    this.checkAuth();
   },
 }
 </script>
@@ -29,6 +41,8 @@ html {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #333;
 }
+
+
 </style>
 
 

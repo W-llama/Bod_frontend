@@ -2,11 +2,10 @@ import axios from 'axios';
 import store from './store';
 
 const instance = axios.create({
-  baseURL: 'http://3.37.71.106:8080/api', // Spring Boot 서버 주소
+  baseURL: 'http://localhost:8080/api', // Spring Boot 서버 주소
   timeout: 5000,
 });
 
-// 요청 인터셉터 추가
 instance.interceptors.request.use(
     config => {
       const accessToken = localStorage.getItem('accessToken');
@@ -20,7 +19,6 @@ instance.interceptors.request.use(
     }
 );
 
-// 응답 인터셉터 추가
 instance.interceptors.response.use(
     response => {
       const accessToken = response.headers['authorization'];

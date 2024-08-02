@@ -79,7 +79,7 @@ export default {
           oldPassword: this.passwordData.currentPassword,
           newPassword: this.passwordData.newPassword
         });
-        this.successMessage = '비밀번호가 성공적으로 변경되었습니다. 다시 로그인해주세요';
+        this.successMessage = '비밀번호가 성공적으로 변경되었습니다';
         alert(this.successMessage);
         window.location.reload();
       } catch (error) {
