@@ -2,7 +2,7 @@ import axios from 'axios';
 import store from './store';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8080/api', // Spring Boot 서버 주소
+  baseURL: 'http://3.37.71.106:8080/api', // Spring Boot 서버 주소
   timeout: 5000,
 });
 
@@ -30,28 +30,10 @@ instance.interceptors.response.use(
       return response;
     },
     async error => {
-      const originalRequest = error.config;
-
-      if (error.response.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-        try {
-          const refreshTokenResponse = await axios.post('/api/refresh-token', null, {
-            withCredentials: true,
-          });
-
-          const newAccessToken = refreshTokenResponse.data.data.accessToken;
-          localStorage.setItem('accessToken', newAccessToken);
-          store.commit('setAccessToken', newAccessToken);
-
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return axios(originalRequest);
-        } catch (refreshError) {
-          store.commit('clearAuth');
-          alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
-          return Promise.reject(refreshError);
-        }
+      if (error.response && error.response.status === 401) {
+        alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        window.location.href = '/';
       }
-
       return Promise.reject(error);
     }
 );

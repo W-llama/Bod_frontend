@@ -26,7 +26,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import LoginModal from '@/components/Login.vue';
+import LoginModal from '@/components/LoginModal.vue';
 
 export default {
   name: 'Header',
