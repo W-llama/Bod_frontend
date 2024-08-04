@@ -3,7 +3,6 @@
     <div class="container">
       <h1>새로운 도전으로 성장하세요</h1>
       <p>챌린저스와 함께 목표를 달성하고 더 나은 자신을 만들어가세요</p>
-      <button class="cta-button" @click="navigateToChallengePage">챌린지 시작하기</button>
     </div>
   </section>
 </template>
@@ -12,9 +11,6 @@
 export default {
   name: 'Hero',
   methods: {
-    navigateToChallengePage() {
-      window.location.href = 'https://challengers.co.kr/create-challenge';
-    }
   }
 }
 </script>
