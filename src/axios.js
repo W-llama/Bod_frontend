@@ -4,6 +4,7 @@ import store from './store';
 const instance = axios.create({
   baseURL: 'http://3.37.71.106:8080/api', // Spring Boot 서버 주소
   timeout: 5000,
+  withCredentials: true, // 자격 증명 포함
 });
 
 instance.interceptors.request.use(
