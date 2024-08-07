@@ -82,12 +82,11 @@ const routes = [
     component: AdminUsers
   },
   {
-    path: '/auth/callback/naver', // 네이버 로그인 콜백 경로를 추가합니다.
+    path: '/auth/callback/naver',
     name: 'NaverLogin',
     component: NaverLogin
   }
 ];
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
