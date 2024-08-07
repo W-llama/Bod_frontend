@@ -23,9 +23,15 @@
         <button class="social-btn google-btn" @click="googleLogin">
           <i class="fab fa-google"></i> Google
         </button>
-        <button class="social-btn naver-btn" @click="naverLogin">
-          <i class="fas fa-n"></i> 네이버
-        </button>
+        <NaverLogin
+            :clientId="'_mFzmKmjK57NuQA5jw2I'"
+            :callbackUrl="'http://localhost:8081/auth/callback/naver'"
+            :callbackFunction="handleNaverLogin"
+        >
+          <button class="social-btn naver-btn">
+            <i class="fas fa-n"></i> 네이버
+          </button>
+        </NaverLogin>
       </div>
       <div class="links">
         <router-link to="/signup">회원가입</router-link>
@@ -37,9 +43,13 @@
 
 <script>
 import { mapActions } from 'vuex';
+import NaverLogin from "@/components/NaverLogin.vue";
 
 export default {
   name: 'LoginModal',
+  components: {
+    NaverLogin
+  },
   data() {
     return {
       loginData: {
@@ -50,7 +60,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['login', 'oauth2Login']),
+    ...mapActions(['login']),
     async loginUser() {
       try {
         await this.login(this.loginData);
@@ -66,8 +76,14 @@ export default {
     googleLogin() {
       this.oauth2Login('google');
     },
-    naverLogin() {
-      this.oauth2Login('naver');
+    handleNaverLogin(token) {
+      if (token) {
+        localStorage.setItem('accessToken', token);
+        this.$store.commit('setAccessToken', token);
+        this.$store.commit('setAuthenticated', true);
+      } else {
+        console.error('네이버 로그인 실패: 액세스 토큰을 받지 못했습니다.');
+      }
     }
   }
 };

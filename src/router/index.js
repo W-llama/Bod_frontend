@@ -14,6 +14,7 @@ import Verification from "@/components/myPage/VerificationModal.vue";
 import MyPageWithDraw from "@/views/myPage/MyPageWithDraw.vue";
 
 import AdminUsers from "@/views/AdminUsers.vue";
+import NaverLogin from "@/components/NaverLogin.vue";
 
 
 const routes = [
@@ -80,6 +81,11 @@ const routes = [
     name: 'adminUsers',
     component: AdminUsers
   },
+  {
+    path: '/auth/callback/naver', // 네이버 로그인 콜백 경로를 추가합니다.
+    name: 'NaverLogin',
+    component: NaverLogin
+  }
 ];
 
 const router = createRouter({
