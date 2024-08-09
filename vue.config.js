@@ -7,7 +7,7 @@ module.exports = {
     port: 8081, // Set the frontend port to 8081
     proxy: {
       '/api': {
-        target: 'http://3.37.71.106:8080', // Backend server URL
+        target: 'http://localhost:8080', // Backend server URL
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
