@@ -7,7 +7,7 @@ import './assets/styles.css';
 
 const axiosInstance = axios.create({
   // baseURL: 'http://3.37.71.106:8080', // Backend server URL
-  baseURL: 'http://localhost:8080', // Backend server URL
+  baseURL: '/api', // Backend server URL
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
