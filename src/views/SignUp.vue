@@ -21,9 +21,29 @@
       <div class="input-group">
         <input type="email" v-model="signUpData.email" required placeholder=" ">
         <label for="email">이메일</label>
-        <button type="button" @click="checkEmail" class="check-btn">중복 확인</button>
+        <button
+            type="button"
+            @click="sendVerificationCode"
+            class="check-btn"
+            :disabled="isSendingCode || timer > 0"
+        >
+          인증코드 전송
+        </button>
+        <span v-if="timer > 0" class="timer">타이머: {{ formatTime(timer) }}</span>
       </div>
       <span v-if="emailError" :class="{ error: !emailValid, success: emailValid }">{{ emailError }}</span>
+
+      <div v-if="isSendingCode" class="loading-indicator">
+        <img src="loading-spinner.gif" alt="Loading...">
+        <p>메일을 전송 중입니다...</p>
+      </div>
+
+      <div class="input-group">
+        <input type="text" v-model="signUpData.code" required placeholder=" ">
+        <label for="code">인증코드</label>
+        <button type="button" @click="verifyEmailCode" class="check-btn">인증코드 확인</button>
+      </div>
+      <span v-if="verificationError" class="error">{{ verificationError }}</span>
 
       <div class="input-group">
         <input type="password" v-model="signUpData.password" required placeholder=" ">
@@ -69,6 +89,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from '../axios';
 
@@ -82,7 +103,8 @@ export default {
         password: '',
         confirmPassword: '',
         nickname: '',
-        adminToken: ''
+        adminToken: '',
+        code: ''
       },
       showAdminKey: false,
       usernameError: '',
@@ -90,10 +112,17 @@ export default {
       nicknameError: '',
       adminTokenError: '',
       passwordError: '',
+      verificationError: '',
       usernameValid: false,
       emailValid: false,
       nicknameValid: false,
-      adminTokenValid: false
+      adminTokenValid: false,
+      verificationSent: false,
+      emailVerified: false,
+      timer: 0,
+      timerSeconds: 300,
+      isSendingCode: false
+
     };
   },
   watch: {
@@ -156,6 +185,64 @@ export default {
         }
       } catch (error) {
         console.error(error.response.data);
+      }
+    },
+    async sendVerificationCode() {
+      if (!this.validateEmail()) return;
+      await this.checkEmail();
+      if (!this.emailValid) {
+        return;
+      }
+      this.isSendingCode = true;
+      try {
+        const response = await axios.post('/signup/email', { email: this.signUpData.email });
+        if (response.status === 200) {
+          console.log('이메일 인증 코드 전송 완료:', response.data);
+          this.startTimer();
+        } else {
+          alert("이메일 인증코드 전송 실패하였습니다.");
+          console.log('이메일 인증 코드 전송 완료:', response.data);
+        }
+      } catch (error) {
+        console.error('이메일 인증 코드 전송 에러 발생:', error.response.data);
+      } finally {
+        this.isSendingCode = false;
+      }
+    },
+    startTimer() {
+      this.timer = this.timerSeconds;
+      this.timerInterval = setInterval(() => {
+        if (this.timer <= 0) {
+          this.stopTimer();
+          return;
+        }
+        this.timer--;
+      }, 1000);
+    },
+    formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    },
+    stopTimer() {
+      clearInterval(this.timerInterval);
+      this.timer = 0;
+    },
+    async verifyEmailCode() {
+      try {
+        const response = await axios.post('/signup/email/verify', { email: this.signUpData.email, code: this.signUpData.code });
+        if (response.status === 200) {
+          alert("인증 코드가 확인되었습니다.");
+          this.verificationError = '';
+          console.log('이메일 인증 코드 전송 완료:', response.data);
+          this.stopTimer();
+        } else {
+          alert("인증 코드가 검증에 실패하였습니다.");
+          console.log('이메일 인증 코드 전송 완료:', response.data);
+        }
+      } catch (error) {
+        console.error('인증 코드 확인 에러 발생:', error);
+        this.verificationError = '인증 코드가 일치하지 않습니다. 인증코드 6자리를 입력해주세요.';
       }
     },
     async checkEmail() {
@@ -322,12 +409,12 @@ form {
   position: relative;
   margin-bottom: 25px;
   display: flex;
-  align-items: center; /* Align items vertically */
-  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 input {
-  flex: 1; /* Take up remaining space */
+  flex: 1;
   padding: 12px 15px;
   border: none;
   border-bottom: 2px solid #ddd;
@@ -484,5 +571,30 @@ button:hover {
 
 .links a:hover {
   color: #764ba2;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.loading-indicator img {
+  width: 50px;
+  height: 50px;
+}
+
+.loading-indicator p {
+  color: #fff;
+  margin-top: 10px;
 }
 </style>
