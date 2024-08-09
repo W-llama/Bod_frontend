@@ -72,9 +72,6 @@ export default createStore({
         }
       }
     },
-    async oauth2Login({ commit }, provider) {
-      window.location.href = `http://3.37.71.106:8080/oauth2/authorization/${provider}`;
-    },
     async logout({ commit }) {
       try {
         const accessToken = localStorage.getItem('accessToken');

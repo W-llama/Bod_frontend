@@ -23,9 +23,9 @@
         <button class="social-btn google-btn" @click="googleLogin">
           <i class="fab fa-google"></i> Google
         </button>
-        <button class="social-btn naver-btn" @click="naverLogin">
+        <a :href="naverLoginUrl" class="social-btn naver-btn">
           <i class="fas fa-n"></i> 네이버
-        </button>
+        </a>
       </div>
       <div class="links">
         <router-link to="/signup">회원가입</router-link>
@@ -47,10 +47,20 @@ export default {
         password: ''
       },
       errorMessage: '',
+      clientId: '_mFzmKmjK57NuQA5jw2I',
+      redirectUri: 'http://localhost:8081/auth/callback/naver',
+      state: 'random_state_string'
     };
   },
+  computed: {
+    naverLoginUrl() {
+      const baseUrl = 'https://nid.naver.com/oauth2.0/authorize';
+      const responseType = 'code';
+      return `${baseUrl}?client_id=${this.clientId}&response_type=${responseType}&redirect_uri=${this.redirectUri}&state=${this.state}`;
+    }
+  },
   methods: {
-    ...mapActions(['login', 'oauth2Login']),
+    ...mapActions(['login']),
     async loginUser() {
       try {
         await this.login(this.loginData);
@@ -65,9 +75,6 @@ export default {
     },
     googleLogin() {
       this.oauth2Login('google');
-    },
-    naverLogin() {
-      this.oauth2Login('naver');
     }
   }
 };

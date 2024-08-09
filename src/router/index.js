@@ -6,7 +6,6 @@ import ChallengeList from "@/components/ChallengeList.vue";
 import AdminView from '../views/Admin.vue'
 import AdminChallengeDetail from "../views/AdminChallengeDetail.vue";
 
-
 import MyPage from "@/views/myPage/MyPage.vue";
 import MyPagePassword from "@/views/myPage/MyPagePassword.vue";
 import MyPageVerificationList from "@/views/myPage/MyPageVerificationList.vue";
@@ -14,7 +13,7 @@ import Verification from "@/components/myPage/VerificationModal.vue";
 import MyPageWithDraw from "@/views/myPage/MyPageWithDraw.vue";
 
 import AdminUsers from "@/views/AdminUsers.vue";
-
+import OAuthCallback from "@/components/OAuthCallback.vue";
 
 const routes = [
   {
@@ -80,8 +79,12 @@ const routes = [
     name: 'adminUsers',
     component: AdminUsers
   },
+  {
+    path: '/auth/callback/naver',
+    name: 'OAuthCallback',
+    component: OAuthCallback
+  }
 ];
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
