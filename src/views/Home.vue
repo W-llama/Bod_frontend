@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <HeroSection />
+    <PointRankingSection />
     <ChallengeCard />
   </div>
 
 </template>
 
 <script>
-import HeroSection from "@/components/HeroSection.vue";
+import PointRankingSection from "@/components/PointRankingSection.vue";
 import ChallengeCard from "@/components/ChallengeCard.vue";
 
 export default {
   components: {
-    HeroSection,
+    PointRankingSection,
     ChallengeCard
   },
 }
