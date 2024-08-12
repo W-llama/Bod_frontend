@@ -1,4 +1,4 @@
-<<template>
+<template>
   <div id="app" class="container">
     <aside class="sidebar">
       <div class="logo">챌린저스 관리자</div>
@@ -61,7 +61,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="member in filteredMembers" :key="member.id">
+          <tr v-for="member in filteredMembers" :key="member.userId">
             <td>{{ member.userId }}</td>
             <td>{{ member.name }}</td>
             <td>{{ member.email }}</td>
@@ -127,9 +127,8 @@ export default {
     return {
       searchQuery: '',
       currentPage: 1,
-      pageSize: 100,
+      pageSize: 10, // Default page size adjusted to 10 as per backend
       totalPages: 1,
-      totalUsers: 0,
       members: [],
       stats: {
         totalUsers: 0,
@@ -162,6 +161,7 @@ export default {
     searchMembers() {
       console.log('검색어:', this.searchQuery);
       // 여기에 검색 로직 구현
+      this.fetchMembers();
     },
     openEditModal(member) {
       this.editingMember = { ...member };
@@ -213,7 +213,13 @@ export default {
         }
       })
       .then(response => {
-        this.members = response.data.data;
+        const data = response.data.data;
+        this.members = data.content; // 현재 페이지의 유저 목록
+        this.totalPages = data.totalPages; // 전체 페이지 수
+        this.totalUsers = data.totalElements; // 전체 유저 수
+
+        // 가입일을 기준으로 오름차순 정렬
+        this.members.sort((a, b) => a.userId - b.userId);
 
         this.stats.activeUsers = 0;
         this.stats.withdrawUsers = 0;
