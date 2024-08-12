@@ -48,7 +48,7 @@ export default {
       },
       errorMessage: '',
       clientId: '_mFzmKmjK57NuQA5jw2I',
-      redirectUri: 'http://localhost:8081/auth/callback/naver',
+      redirectUri: 'http://challengersbod.store/auth/callback/naver',
       state: 'random_state_string'
     };
   },
