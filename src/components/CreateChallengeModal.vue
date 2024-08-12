@@ -42,6 +42,10 @@
           <label for="endTime">종료일</label>
           <input type="date" v-model="challenge.endTime" id="endTime" required />
         </div>
+        <div>
+          <label for="limitedUsers">인원제한</label>
+          <input type="text" v-model="challenge.limitedUsers" id="limitedUsers" required />
+        </div>
         <button type="submit">생성완료</button>
       </form>
     </div>
@@ -66,7 +70,8 @@ export default {
         category: '',
         conditionStatus: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        limitedUsers: ''
       },
       imageFile: null
     };
@@ -94,6 +99,7 @@ export default {
         formData.append('conditionStatus', this.challenge.conditionStatus);
         formData.append('startTime', formattedStartTime);
         formData.append('endTime', formattedEndTime);
+        formData.append('limitedUsers', this.challenge.limitedUsers);
         if (this.imageFile) {
           formData.append('image', this.imageFile);
         }
@@ -105,7 +111,8 @@ export default {
           category: this.challenge.category,
           conditionStatus: this.challenge.conditionStatus,
           startTime: formattedStartTime,
-          endTime: formattedEndTime
+          endTime: formattedEndTime,
+          limitedUsers: this.challenge.limitedUsers
         };
         formData.append('request', new Blob([JSON.stringify(requestDto)], { type: 'application/json' }));
 

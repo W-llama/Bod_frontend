@@ -58,6 +58,8 @@
             <th>상태</th>
             <th>시작일</th>
             <th>종료일</th>
+            <th>참가인원</th>
+            <th>인원제한</th>
             <th>작업</th>
           </tr>
           </thead>
@@ -69,6 +71,8 @@
             <td>{{ challenge.conditionStatus }}</td>
             <td>{{ formatDate(challenge.startTime) }}</td>
             <td>{{ formatDate(challenge.endTime) }}</td>
+            <td>{{ challenge.joinedUsers }}</td>
+            <td>{{ challenge.limitedUsers }}</td>
             <td>
               <button @click="viewChallengeDetail(challenge.challengeId)" class="btn btn-get">조회하기</button>
               <button @click="editChallenge(challenge)" class="btn">수정하기</button>
@@ -107,7 +111,6 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
 import axios from '../axios';
 import EditChallengeModal from '../components/EditChallengeModal.vue';
 import CreateChallengeModal from '../components/CreateChallengeModal.vue';
@@ -122,7 +125,7 @@ export default {
       activeTab: 'dashboard',
       searchQuery: '',
       currentPage: 1,
-      pageSize: 100,
+      pageSize: 10,
       totalPages: 1,
       totalChallenges: 0,
       challenges: [],
@@ -163,8 +166,11 @@ export default {
           }
         });
         if (response.status === 200 && response.data) {
-          this.challenges = response.data.data || [];
-          this.totalChallenges = this.challenges.length;
+          const { data } = response.data; // 데이터 객체를 직접 사용
+
+          this.challenges = data.content || []; // PaginationResponse의 content 필드 사용
+          this.totalChallenges = data.totalElements || 0;
+          this.totalPages = data.totalPages || 1; // 페이지 수 설정
 
           this.stats.beforeChallenges = 0;
           this.stats.todoChallenges = 0;
@@ -188,8 +194,6 @@ export default {
               this.stats.beforeChallenges +
               this.stats.todoChallenges +
               this.stats.completeChallenges;
-
-          this.totalPages = Math.ceil(this.totalChallenges / this.pageSize);
         } else {
           console.error('Failed to fetch challenges:', response.data.msg || 'Unknown error');
         }
@@ -204,7 +208,7 @@ export default {
       return this.activeTab === tab;
     },
     searchChallenges() {
-      this.currentPage = 1;
+      this.currentPage = 1; // 검색 시 첫 페이지로 이동
       this.fetchChallenges();
     },
     viewChallengeDetail(id) {
@@ -215,7 +219,6 @@ export default {
       this.isEditModalVisible  = true;
     },
     async deleteChallenge(id) {
-      // 확인 대화상자를 띄우고 사용자의 응답을 확인합니다.
       const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
       if (isConfirmed) {
         try {
@@ -234,9 +237,6 @@ export default {
       }
     },
     openCreateModal() {
-      this.isCreateModalVisible = true;
-    },
-    createNewChallenge() {
       this.isCreateModalVisible = true;
     },
     changePage(pageNumber) {

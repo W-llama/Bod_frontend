@@ -13,6 +13,7 @@
           <h2 class="card-title">챌린지 정보</h2>
         </div>
         <div class="info-grid">
+          <!-- 챌린지 정보 표시 -->
           <div class="info-item">
             <div class="info-label">챌린지 ID</div>
             <div class="info-value">{{ challengeInfo.challengeId || '데이터 없음' }}</div>
@@ -37,6 +38,14 @@
             <div class="info-label">종료일</div>
             <div class="info-value">{{ formatDate(challengeInfo.endTime) || '데이터 없음' }}</div>
           </div>
+          <div class="info-item">
+            <div class="info-label">참가인원</div>
+            <div class="info-value">{{ challengeInfo.joinedUsers || '0' }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">인원제한</div>
+            <div class="info-value">{{ challengeInfo.limitedUsers || '데이터 없음' }}</div>
+          </div>
         </div>
         <div class="challenge-content">
           <p>{{ challengeInfo.content || '데이터 없음' }}</p>
@@ -59,7 +68,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="record in certificationRecords" :key="record.id">
+          <tr v-for="record in certificationRecords.content" :key="record.id">
             <td>{{ record.user }}</td>
             <td>{{ formatDate(record.createdAt) }}</td>
             <td><img :src="record.image" alt="Certification Image" class="certification-image"></td>
@@ -72,6 +81,11 @@
           </tr>
           </tbody>
         </table>
+        <div class="pagination">
+          <button @click="fetchCertificationRecords(currentPage - 1)" :disabled="currentPage <= 1">이전</button>
+          <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+          <button @click="fetchCertificationRecords(currentPage + 1)" :disabled="currentPage >= totalPages">다음</button>
+        </div>
       </div>
     </main>
   </div>
@@ -84,7 +98,9 @@ export default {
   data() {
     return {
       challengeInfo: {},
-      certificationRecords: [],
+      certificationRecords: { content: [], totalElements: 0, totalPages: 1 },
+      currentPage: 1,
+      pageSize: 10,
     };
   },
   methods: {
@@ -104,15 +120,22 @@ export default {
         console.error('Error fetching challenge details:', error);
       }
     },
-    async fetchCertificationRecords() {
+    async fetchCertificationRecords(page = 1) {
       try {
         const challengeId = this.$route.params.challengeId;
-        const response = await axios.get(`/admins/challenges/${challengeId}/verifications`);
+        const response = await axios.get(`/admins/challenges/${challengeId}/verifications`, {
+          params: {
+            page: page,
+            size: this.pageSize
+          }
+        });
 
         console.log('API 응답:', response.data);
 
         if (response.status === 200 && response.data) {
           this.certificationRecords = response.data.data;
+          this.currentPage = page;
+          this.totalPages = response.data.totalPages || 1;
         } else {
           console.error('Failed to fetch certification records:', response.data.msg || 'Unknown error');
         }
@@ -131,7 +154,7 @@ export default {
 
         if (response.status === 200) {
           console.log('인증 승인 성공:', response.data);
-          this.fetchCertificationRecords();
+          this.fetchCertificationRecords(this.currentPage);
         } else {
           console.error('Failed to approve certification record:', response.data.msg || 'Unknown error');
         }
@@ -150,7 +173,7 @@ export default {
 
         if (response.status === 200) {
           console.log('인증 거절 성공:', response.data);
-          this.fetchCertificationRecords();
+          this.fetchCertificationRecords(this.currentPage);
         } else {
           console.error('Failed to reject certification record:', response.data.msg || 'Unknown error');
         }
@@ -346,5 +369,31 @@ tr:hover {
   .info-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  background-color: #edf2f7;
+  color: #2d3748;
+  border: 1px solid #cbd5e0;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  background-color: #f7fafc;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #e2e8f0;
 }
 </style>
