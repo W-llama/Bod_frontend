@@ -13,7 +13,11 @@
       </button>
     </div>
 
-    <div class="challenges">
+    <div v-if="noChallenges" class="no-challenges">
+      해당 카테고리에는 현재 등록된 챌린지가 없습니다.
+    </div>
+
+    <div v-else class="challenges">
       <div
           v-for="challenge in challenges"
           :key="challenge.id"
@@ -28,7 +32,7 @@
       </div>
     </div>
 
-    <div class="pagination">
+    <div v-if="!noChallenges" class="pagination">
       <button
           v-for="pageNumber in totalPages"
           :key="pageNumber"
@@ -53,7 +57,8 @@ export default {
       challenges: [],
       currentPage: 1,
       itemsPerPage: 9,
-      totalPages: 0
+      totalPages: 0,
+      noChallenges: false
     };
   },
   mounted() {
@@ -62,6 +67,8 @@ export default {
   methods: {
     fetchChallenges(pageNumber) {
       this.currentPage = pageNumber;
+      this.noChallenges = false;
+
       const zeroBasedPageNumber = pageNumber - 1;
 
       let apiUrl = '';
@@ -75,12 +82,20 @@ export default {
       axios.get(apiUrl)
       .then(response => {
         console.log('API Response:', response.data);
-        this.challenges = response.data.data.content;
-        this.totalPages = response.data.data.totalPages;
+        if (response.data.data.content.length === 0) {
+          this.noChallenges = true;
+        } else {
+          this.challenges = response.data.data.content;
+          this.totalPages = response.data.data.totalPages;
+        }
         console.log('Challenges:', this.challenges);
       })
       .catch(error => {
-        console.error('챌린지 조회 실패', error);
+        if (error.response && error.response.status === 404) {
+          this.noChallenges = true;
+        } else {
+          console.error('챌린지 조회 실패', error);
+        }
       });
     },
     selectCategory(category) {
@@ -139,6 +154,13 @@ h1 {
 .category-btn:hover, .category-btn.active {
   background-color: white;
   color: #667eea;
+}
+
+.no-challenges {
+  text-align: center;
+  padding: 20px;
+  color: #FFFFFFFF;
+  font-size: 1.2em;
 }
 
 .challenges {
