@@ -1,6 +1,9 @@
 <template>
   <div class="challenge-verifications">
     <h2>최근 인증</h2>
+    <div v-if="verifications.length === 0 && !hasError" class="no-verifications">
+      최근 인증 내역이 없습니다.
+    </div>
     <div class="verification-grid">
       <div class="verification-item" v-for="(verification, index) in verifications" :key="index">
         <img :src="verification.image" :alt="verification.name" class="verification-image">
@@ -19,7 +22,14 @@
 export default {
   name: 'ChallengeVerifications',
   props: {
-    verifications: Array
+    verifications: {
+      type: Array,
+      default: () => []
+    },
+    hasError: {
+      type: Boolean,
+      default: false
+    }
   }
 };
 </script>
@@ -85,4 +95,11 @@ export default {
   font-size: 14px;
   color: #444;
 }
+
+.no-verifications {
+  text-align: center;
+  color: #0a0a0a;
+  font-size: 16px;
+}
+
 </style>

@@ -12,7 +12,7 @@
       <tbody>
       <tr v-for="(user, index) in pointRanking" :key="index">
         <td>{{ user.rank }}</td>
-        <td>{{ user.nickName }}</td>
+        <td>{{ user.name }}</td>
         <td>{{ user.point }}</td>
       </tr>
       </tbody>
