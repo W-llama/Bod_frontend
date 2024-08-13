@@ -4,7 +4,7 @@
       <button class="close-button" @click="$emit('close')">&times;</button>
       <div class="background-shape"></div>
       <div class="logo">
-        <img src="https://challengers.co.kr/logo.png" alt="챌린저스 로고">
+        <img src="https://github.com/user-attachments/assets/9bafec6e-7199-4e1e-8a2d-b1e6b31081c0" alt="챌린저스 로고">
       </div>
       <h1>환영합니다!</h1>
       <form @submit.prevent="loginUser">
