@@ -21,7 +21,7 @@
               <p>{{ challenge.content }}</p>
             </div>
 
-            <ChallengeVerifications :verifications="verifications"/>
+            <ChallengeVerifications :verifications="verifications" :hasError="verificationsError"/>
           </div>
 
           <div class="challenge-sidebar">
@@ -85,7 +85,8 @@ export default {
       },
       verifications: [],
       participants: [],
-      topUsers: []
+      topUsers: [],
+      verificationsError: false
     };
   },
   methods: {
@@ -101,7 +102,7 @@ export default {
         this.fetchTop3Users(challengeId);
       })
       .catch(error => {
-        console.error('Error fetching challenge details:', error);
+        console.error('챌린지 상세조회 실패:', error);
       });
     },
     fetchVerifications(challengeId) {
@@ -110,7 +111,7 @@ export default {
         this.verifications = response.data.data;
       })
       .catch(error => {
-        console.error('Error fetching verifications:', error);
+        console.error('최근 인증내역 조회 실패:', error);
       });
     },
     fetchParticipants(challengeId) {
@@ -119,7 +120,7 @@ export default {
         this.participants = response.data.data;
       })
       .catch(error => {
-        console.error('Error fetching participants:', error);
+        console.error('챌린지 참여자 목로조회 실패:', error);
       });
     },
     fetchTop3Users(challengeId) {
@@ -128,7 +129,7 @@ export default {
         this.topUsers = response.data.data;
       })
       .catch(error => {
-        console.error('Error fetching top 3 users:', error);
+        console.error('챌린지 top3 인증 참여자 조회 실패:', error);
       });
     },
     async joinChallenge() {
