@@ -14,6 +14,9 @@
           <div class="main-content">
             <div class="card">
               <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
+              <h3 style="text-align: center;">
+                참가인원 : {{ challenge.joinedUsers }}명 &nbsp; &nbsp; 인원제한 : {{ challenge.limitedUsers }}명
+              </h3>
               <h2>챌린지 소개</h2>
               <p>{{ challenge.content }}</p>
             </div>

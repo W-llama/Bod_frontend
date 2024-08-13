@@ -27,6 +27,9 @@
         <img :src="challenge.imageUrl" :alt="challenge.title" class="challenge-image">
         <div class="challenge-content">
           <h2 class="challenge-title">{{ challenge.title }}</h2>
+          <h3 class="challenge-users">
+            참가인원 : {{ challenge.joinedUsers }}명 &nbsp; &nbsp; 인원제한 : {{ challenge.limitedUsers }}명
+          </h3>
           <p class="challenge-description">{{ challenge.content }}</p>
         </div>
       </div>
@@ -218,16 +221,24 @@ h1 {
 }
 
 .challenge-content {
-  padding: 20px;
+  padding: 5px;
 }
 
 .challenge-title {
   font-size: 22px;
   margin-bottom: 10px;
+  text-align: center;
+}
+
+.challenge-users {
+  font-size: 16px;
+  margin-bottom: 5px;
+  text-align: center;
 }
 
 .challenge-description {
   font-size: 16px;
+  text-align: center;
   color: #666;
 }
 
