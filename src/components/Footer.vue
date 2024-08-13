@@ -1,7 +1,7 @@
 <template>
   <footer>
     <div class="container">
-      <p>&copy; 2023 챌린저스. All rights reserved.</p>
+      <p>&copy; 2024 챌린저스. ChallengersBOD팀 : 류승범, 김형석, 김기남, 한해정 </p>
     </div>
   </footer>
 </template>
