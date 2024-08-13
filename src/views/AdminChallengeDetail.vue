@@ -4,7 +4,7 @@
       <header class="header">
         <h1 class="page-title">관리자 챌린지 상세페이지</h1>
         <div class="user-info">
-          <span>관리자님, 안녕하세요!</span>
+          <span>관리자만 이용이 가능한 페이지 입니다.</span>
         </div>
       </header>
 

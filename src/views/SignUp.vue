@@ -2,7 +2,7 @@
   <div class="signup-container">
     <div class="background-shape"></div>
     <div class="logo">
-      <img src="https://challengers.co.kr/logo.png" alt="챌린저스 로고">
+      <img src="https://github.com/user-attachments/assets/9bafec6e-7199-4e1e-8a2d-b1e6b31081c0" alt="챌린저스 로고">
     </div>
     <h1>회원가입</h1>
     <form @submit.prevent="signUp">
@@ -34,7 +34,7 @@
       <span v-if="emailError" :class="{ error: !emailValid, success: emailValid }">{{ emailError }}</span>
 
       <div v-if="isSendingCode" class="loading-indicator">
-        <img src="loading-spinner.gif" alt="Loading...">
+        <img src="https://github.com/user-attachments/assets/fa8352da-8906-47af-b446-d56997872aa5" alt="Loading...">
         <p>메일을 전송 중입니다...</p>
       </div>
 
