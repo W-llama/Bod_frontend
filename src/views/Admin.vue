@@ -130,16 +130,16 @@ export default {
       totalChallenges: 0,
       challenges: [],
       stats: {
-        totalChallenges: 0,
-        beforeChallenges: 0,
-        todoChallenges: 0,
-        completeChallenges: 0
+        challengesCount: 0,
+        beforeChallengesCount: 0,
+        todoChallengesCount: 0,
+        completeChallengesCount: 0
       },
       labels: {
-        totalChallenges: '총 챌린지 수',
-        beforeChallenges: '대기중인 챌린지 수',
-        todoChallenges: '진행중인 챌린지 수',
-        completeChallenges: '마감된 챌린지 수'
+        challengesCount: '총 챌린지 수',
+        beforeChallengesCount: '대기중인 챌린지 수',
+        todoChallengesCount: '진행중인 챌린지 수',
+        completeChallengesCount: '마감된 챌린지 수'
       },
       isEditModalVisible: false,
       isCreateModalVisible: false,
@@ -171,34 +171,23 @@ export default {
           this.challenges = data.content || []; // PaginationResponse의 content 필드 사용
           this.totalChallenges = data.totalElements || 0;
           this.totalPages = data.totalPages || 1; // 페이지 수 설정
-
-          this.stats.beforeChallenges = 0;
-          this.stats.todoChallenges = 0;
-          this.stats.completeChallenges = 0;
-
-          this.challenges.forEach(challenge => {
-            switch (challenge.conditionStatus) {
-              case 'BEFORE':
-                this.stats.beforeChallenges += 1;
-                break;
-              case 'TODO':
-                this.stats.todoChallenges += 1;
-                break;
-              case 'COMPLETE':
-                this.stats.completeChallenges += 1;
-                break;
-            }
-          });
-
-          this.stats.totalChallenges =
-              this.stats.beforeChallenges +
-              this.stats.todoChallenges +
-              this.stats.completeChallenges;
         } else {
           console.error('Failed to fetch challenges:', response.data.msg || 'Unknown error');
         }
       } catch (error) {
         console.error('Error fetching challenges:', error);
+      }
+    },
+    async fetchChallengeCounts() {
+      try {
+        const response = await axios.get('/admins/challenges/counts');
+        if (response.status === 200 && response.data) {
+          this.stats = response.data.data || {}; // 데이터 객체를 직접 사용
+        } else {
+          console.error('Failed to fetch challenge counts:', response.data.msg || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error fetching challenge counts:', error);
       }
     },
     setActive(tab) {
@@ -225,6 +214,7 @@ export default {
           const response = await axios.delete(`/admins/challenges/${id}`);
           if (response.status === 200) {
             this.fetchChallenges(); // 목록을 새로고침하여 삭제된 챌린지가 반영되도록 합니다.
+            this.fetchChallengeCounts();
             console.log('Challenge deleted successfully');
           } else {
             console.error('Failed to delete challenge:', response.data.msg || 'Unknown error');
@@ -251,6 +241,7 @@ export default {
   },
   created() {
     this.fetchChallenges();
+    this.fetchChallengeCounts();
   }
 };
 </script>
