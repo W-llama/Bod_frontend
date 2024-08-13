@@ -6,7 +6,7 @@ import axios from 'axios';
 import './assets/styles.css';
 
 const axiosInstance = axios.create({
-  baseURL: '/api', // Backend server URL
+  baseURL: 'https://localhost:8443/api', // Backend server URL
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
