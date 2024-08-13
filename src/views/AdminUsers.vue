@@ -131,14 +131,18 @@ export default {
       totalPages: 1,
       members: [],
       stats: {
-        totalUsers: 0,
-        activeUsers: 0,
-        withdrawUsers: 0
+        usersCount: 0,
+        activeUsersCount: 0,
+        withdrawUsersCount: 0,
+        adminUsersCount: 0,
+        userUsersCount: 0
       },
       labels: {
-        totalUsers: '총 유저',
-        activeUsers: '활성화된 유저',
-        withdrawUsers: '차단된 유저'
+        usersCount: '총 유저',
+        activeUsersCount: '활성화된 유저',
+        withdrawUsersCount: '차단된 유저',
+        adminUsersCount: '관리자',
+        userUsersCount: '일반 유저'
       },
       showEditModal: false,
       showManageRoleModal: false,
@@ -158,6 +162,17 @@ export default {
     }
   },
   methods: {
+    async getUserCounts() {
+      try {
+        const response = await axios.get('/admins/users/counts');
+        const { data } = response;
+        if (data && data.data) {
+          this.stats = data.data;
+        }
+      } catch (error) {
+        console.error('Error fetching user counts:', error);
+      }
+    },
     searchMembers() {
       console.log('검색어:', this.searchQuery);
       // 여기에 검색 로직 구현
@@ -177,7 +192,8 @@ export default {
       })
       .then(response => {
         console.log('수정된 회원 정보:', response.data);
-        this.fetchMembers(); // 회원 목록을 다시 가져와서 갱신
+        this.fetchMembers();
+        this.getUserCounts();
         this.closeEditModal();
       })
       .catch(error => {
@@ -199,7 +215,8 @@ export default {
       .then(response => {
         console.log('회원 상태 수정 성공:', response.data);
         this.closeManageRoleModal();
-        this.fetchMembers(); // Save change and fetch updated members list
+        this.fetchMembers();
+        this.getUserCounts();
       })
       .catch(error => {
         console.error('회원 상태 수정 실패:', error);
@@ -214,29 +231,11 @@ export default {
       })
       .then(response => {
         const data = response.data.data;
-        this.members = data.content; // 현재 페이지의 유저 목록
-        this.totalPages = data.totalPages; // 전체 페이지 수
-        this.totalUsers = data.totalElements; // 전체 유저 수
+        this.members = data.content;
+        this.totalPages = data.totalPages;
 
-        // 가입일을 기준으로 오름차순 정렬
+        // 유저id 기준으로 오름차순 정렬
         this.members.sort((a, b) => a.userId - b.userId);
-
-        this.stats.activeUsers = 0;
-        this.stats.withdrawUsers = 0;
-
-        this.members.forEach(member => {
-          switch (member.userStatus) {
-            case 'ACTIVE':
-              this.stats.activeUsers += 1;
-              break;
-            case 'WITHDRAW':
-              this.stats.withdrawUsers += 1;
-              break;
-          }
-          this.stats.totalUsers =
-              this.stats.activeUsers +
-              this.stats.withdrawUsers;
-        });
       })
       .catch(error => {
         console.error('회원 목록을 가져오는 데 실패했습니다:', error);
@@ -258,8 +257,9 @@ export default {
       return new Date(dateString).toLocaleDateString();
     }
   },
-  mounted() {
-    this.fetchMembers();
+  async mounted() {
+    await this.getUserCounts(); // Fetch user counts on mount
+    this.fetchMembers(); // Fetch members on mount
   }
 };
 </script>
