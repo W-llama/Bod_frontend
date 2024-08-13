@@ -8,6 +8,9 @@
             <img :src="challenge.image" :alt="challenge.title" class="challenge-image">
             <div class="challenge-content">
               <h2>{{ challenge.title }}</h2>
+              <h3 style="text-align: center;">
+                참가인원 : {{ challenge.joinedUsers }}명 &nbsp; &nbsp; 인원제한 : {{ challenge.limitedUsers }}명
+              </h3>
               <p>{{ challenge.content }}</p>
             </div>
           </div>
@@ -41,6 +44,8 @@ export default {
           title: challenge.title,
           content: challenge.content,
           image: challenge.imageUrl,
+          joinedUsers: challenge.joinedUsers,
+          limitedUsers: challenge.limitedUsers
         }));
         this.loading = false;
       })
