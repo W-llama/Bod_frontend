@@ -2,7 +2,7 @@ import axios from 'axios';
 import store from './store';
 
 const instance = axios.create({
-  baseURL: 'https://chanllengersbod.store:8080', // Backend server URL
+  baseURL: 'https://challengersbod.store:8080', // Backend server URL
   timeout: 5000,
   withCredentials: true, // 자격 증명 포함
 });
