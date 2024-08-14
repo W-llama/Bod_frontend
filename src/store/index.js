@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import axios from '@/axios';
 import router from "@/router";
+import header from "@/components/Header.vue";
 
 export default createStore({
   state: {
@@ -53,6 +54,7 @@ export default createStore({
         const accessToken = response.headers['authorization'];
         if (accessToken) {
           localStorage.setItem('accessToken', accessToken);
+
           commit('setAccessToken', accessToken);
           commit('setAuthenticated', true);
         } else {
