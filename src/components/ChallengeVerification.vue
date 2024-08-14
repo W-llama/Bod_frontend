@@ -12,15 +12,26 @@
           <div class="verification-date">{{ verification.date }}</div>
           <div class="verification-content">{{ verification.title }}</div>
           <div class="verification-content">{{ verification.content }}</div>
+          <button class="button" @click="openUserProfileModal(verification.userId)">
+            유저 프로필 조회
+          </button>
         </div>
       </div>
     </div>
+    <UserProfileModal
+        v-if="showUserProfileModal"
+        :user-id="selectedUserId"
+        @close="showUserProfileModal = false"
+    />
   </div>
 </template>
 
 <script>
+import UserProfileModal from "@/components/UserProfileModal.vue";
+
 export default {
   name: 'ChallengeVerifications',
+  components: {UserProfileModal},
   props: {
     verifications: {
       type: Array,
@@ -30,11 +41,24 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  data() {
+    return {
+      showUserProfileModal: false,
+      selectedUserId: null
+    };
+  },
+  methods: {
+    openUserProfileModal(userId) {
+      this.selectedUserId = userId;
+      this.showUserProfileModal = true;
+    }
   }
 };
 </script>
 
 <style scoped>
+/* 기존 스타일 유지 */
 .challenge-verifications {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
@@ -102,4 +126,20 @@ export default {
   font-size: 16px;
 }
 
+.button {
+  background-color: #ffd166;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  width: 100%;
+}
+
+.button:hover {
+  background: #5a67d8;
+}
 </style>
