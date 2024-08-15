@@ -131,19 +131,34 @@ export default createStore({
         alert('프로필 조회에 실패했습니다. 다시 로그인 해주세요.');
       }
     },
-    async updateProfile({ commit }, profileData) {
+    async updateNickName({ commit }, profileData) {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.put('/users/profile', profileData, {
+        const response = await axios.put('/users/profile/nickname', profileData, {
           headers: {
             Authorization: accessToken,
           },
         });
         commit('setUserProfile', response.data.data);
-        alert('프로필이 성공적으로 수정되었습니다.');
+        alert('닉네임이 성공적으로 수정되었습니다.');
       } catch (error) {
-        console.error('프로필 수정 실패:', error);
-        alert('프로필 수정에 실패했습니다.');
+        console.error('닉네임 수정 실패:', error);
+        alert('닉네임 수정에 실패했습니다.');
+      }
+    },
+    async updateIntroduce ({ commit }, profileData) {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.put('/users/profile/introduce', profileData, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        commit('setUserProfile', response.data.data);
+        alert('자기소개가 성공적으로 수정되었습니다.');
+      } catch (error) {
+        console.error('닉네임 수정 실패:', error);
+        alert('자기소개가 성공적으로 수정되었습니다.');
       }
     },
     async updateProfileImage({ commit }, imageData) {
