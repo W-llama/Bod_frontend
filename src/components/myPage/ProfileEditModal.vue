@@ -15,7 +15,7 @@
 
         <div class="input-group">
           <label for="nickname">닉네임</label>
-          <input type="text" v-model="profileData.nickname" required>
+          <input type="text" v-model="profileData.nickname">
           <button type="button" @click="checkNickname" class="check-btn">중복 확인</button>
         </div>
         <div v-if="nicknameError" class="error">{{ nicknameError }}</div>
@@ -36,26 +36,28 @@ import axios from "@/axios";
 
 export default {
   props: {
-    userProfile: Object
+    userProfile: {
+      type: Object,
+      default: () => ({
+        nickname: '',
+        introduce: '',
+        image: ''
+      })
+    }
   },
   data() {
     return {
       profileData: {
-        nickname: this.userProfile ? this.userProfile.nickname : '',
-        introduce: this.userProfile ? this.userProfile.introduce : '',
+        nickname: this.userProfile.nickname || '',
+        introduce: this.userProfile.introduce || '',
         image: null,
-        imageUrl: this.userProfile && this.userProfile.image ? `https://bodchallenge.s3.ap-northeast-2.amazonaws.com/${this.userProfile.image}` : ''
+        imageUrl: this.userProfile.image
+            ? `https://bodchallenge.s3.ap-northeast-2.amazonaws.com/${this.userProfile.image}`
+            : ''
       },
       nicknameError: '',
-      nicknameValid: false
+      nicknameValid: !!this.userProfile.nickname,
     };
-  },
-  watch: {
-    'profileData.nickname': function (newVal) {
-      if (!newVal) {
-        this.nicknameError = '';
-      }
-    }
   },
   methods: {
     onFileChange(event) {
@@ -65,17 +67,23 @@ export default {
     },
     async submitEditProfile() {
       try {
-        if (!this.nicknameValid) {
+        if (this.profileData.nickname !== this.userProfile.nickname && !this.nicknameValid) {
           this.nicknameError = '닉네임 중복 확인을 해주세요.';
           return;
         }
-        await this.$store.dispatch('updateProfile', {
-          nickname: this.profileData.nickname,
-          introduce: this.profileData.introduce
-        });
+
+        if (this.profileData.nickname !== this.userProfile.nickname) {
+          await this.$store.dispatch('updateNickName', { nickname: this.profileData.nickname.trim() });
+        }
+
+        if (this.profileData.introduce !== this.userProfile.introduce) {
+          await this.$store.dispatch('updateIntroduce', { introduce: this.profileData.introduce.trim() });
+        }
+
         if (this.profileData.image) {
           await this.$store.dispatch('updateProfileImage', this.profileData.image);
         }
+
         this.$emit('close');
       } catch (error) {
         alert('프로필 수정 실패: ' + error.message);
@@ -93,13 +101,12 @@ export default {
           this.nicknameValid = true;
         }
       } catch (error) {
-        console.error(error.response.data);
+        console.error('닉네임 확인 중 오류:', error);
         this.nicknameError = '닉네임 확인 중 오류가 발생했습니다.';
       }
     },
     validateNickname() {
-      if (this.profileData.nickname.length < 3 || this.profileData.nickname.length > 13 || !/^[a-zA-Z가-힣0-9]*$/.test(
-          this.profileData.nickname)) {
+      if (this.profileData.nickname.length < 3 || this.profileData.nickname.length > 13 || !/^[a-zA-Z가-힣0-9]*$/.test(this.profileData.nickname)) {
         this.nicknameError = '닉네임은 3자 이상 13자 이하의 문자와 숫자로 구성되어야 합니다.';
         this.nicknameValid = false;
         return false;
@@ -152,7 +159,7 @@ export default {
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Ensure input groups take full width */
+  width: 100%;
 }
 
 .input-group label {
@@ -160,7 +167,7 @@ export default {
 }
 
 .input-group input, .input-group textarea {
-  width: 100%; /* Full width */
+  width: 100%;
   padding: 8px;
   box-sizing: border-box;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -170,7 +177,7 @@ export default {
 }
 
 .input-group textarea {
-  resize: none; /* Disable resizing */
+  resize: none;
 }
 
 .check-btn {
