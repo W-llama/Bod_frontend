@@ -1,8 +1,8 @@
-
 <template>
   <div>
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
+        <button class="close-btn" @click="closeModal">X</button>
         <form class="verification-form" @submit.prevent="submitVerification">
           <div class="form-group">
             <label for="verification-title">인증 제목</label>
@@ -44,7 +44,7 @@ export default {
     },
     closeModal() {
       this.showModal = false;
-      this.$emit('modal-closed');
+      this.$emit('close');
     },
     handleFileUpload(event) {
       this.verificationImage = event.target.files[0];
@@ -103,6 +103,7 @@ export default {
 }
 
 .modal {
+  position: relative;
   background-color: white;
   padding: 30px;
   border-radius: 15px;
@@ -111,11 +112,14 @@ export default {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .modal-header h3 {
@@ -124,15 +128,8 @@ export default {
   color: #333;
 }
 
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
 .form-group {
-  margin-bottom: 20px;
+  margin: 20px;
 }
 
 .form-group label {
