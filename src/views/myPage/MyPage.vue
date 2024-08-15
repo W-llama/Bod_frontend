@@ -5,55 +5,43 @@
       <div class="container">
         <h1 class="page-title">나의 챌린지 현황</h1>
         <div class="kanban-board">
-          <div class="kanban-column">
-            <h2>시작 전</h2>
-            <div v-if="beforeChallenges.length === 0" class="no-data">신청한 목록이 없습니다.</div>
-            <div v-else>
-              <div v-for="challenge in beforeChallenges" :key="challenge.challengeId" class="kanban-card">
-                <img :src="challenge.image" alt="카드 이미지" class="kanban-card-image" />
-                <div class="kanban-card-title">{{ challenge.title }}</div>
-                <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="kanban-column">
-            <h2>진행 중</h2>
-            <div v-if="ongoingChallenges.length === 0" class="no-data">신청한 목록이 없습니다.</div>
-            <div v-else>
-              <div v-for="challenge in ongoingChallenges" :key="challenge.challengeId" class="kanban-card">
-                <img :src="challenge.image" alt="카드 이미지" class="kanban-card-image" />
-                <div class="kanban-card-title">{{ challenge.title }}</div>
-                <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
-                <div class="kanban-card-progress">
-                  <progress :value="challenge.completionRate" max="100"></progress>
-                  <span>{{ challenge.completionRate }}%</span>
-                </div>
-                <button class="btn" @click="openVerificationModal(challenge.challengeId)">인증하기</button>
-              </div>
-            </div>
-          </div>
-          <div class="kanban-column">
-            <h2>완료</h2>
-            <div v-if="completedChallenges.length === 0" class="no-data">신청한 목록이 없습니다.</div>
-            <div v-else>
-              <div v-for="challenge in completedChallenges" :key="challenge.challengeId" class="kanban-card">
-                <img :src="challenge.image" alt="카드 이미지" class="kanban-card-image" />
-                <div class="kanban-card-title">{{ challenge.title }}</div>
-                <div class="kanban-card-period">{{ formatDate(challenge.startTime) }} ~ {{ formatDate(challenge.endTime) }}</div>
-                <div>완료일: {{ formatDate(challenge.createAt) }}</div>
-              </div>
-            </div>
-          </div>
+          <KanbanColumn
+              title="시작 전"
+              :challenges="beforeChallenges"
+              noDataMessage="신청한 목록이 없습니다."
+              imageMode="before"
+          />
+          <KanbanColumn
+              title="진행 중"
+              :challenges="ongoingChallenges"
+              noDataMessage="신청한 목록이 없습니다."
+              imageMode="ongoing"
+              @verification="openVerificationModal"
+          />
+          <KanbanColumn
+              title="완료"
+              :challenges="completedChallenges"
+              noDataMessage="신청한 목록이 없습니다."
+              imageMode="completed"
+          />
+        </div>
+        <div class="pagination-container">
+          <button @click="prevPage" :disabled="page === 0">이전</button>
+          <span>Page {{ page + 1 }}</span>
+          <button @click="nextPage" :disabled="!hasMore">다음</button>
         </div>
       </div>
     </main>
-    <VerificationModal v-if="showVerificationModal"
-                       :challengeId="selectedChallengeId"
-                       @close="handleCloseVerificationModal" />
-
-    <ProfileEditModal v-if="showProfileEditModal"
-                      @close="showProfileEditModal = false"
-                      @profile-updated="updateUserProfile" />
+    <VerificationModal
+        v-if="showVerificationModal"
+        :challengeId="selectedChallengeId"
+        @close="showVerificationModal = false"
+    />
+    <ProfileEditModal
+        v-if="showProfileEditModal"
+        @close="showProfileEditModal = false"
+        @profile-updated="updateUserProfile"
+    />
   </div>
 </template>
 
@@ -61,6 +49,7 @@
 import VerificationModal from '@/components/myPage/VerificationModal.vue';
 import MyPageSlideBar from '@/components/myPage/MyPageSideBar.vue';
 import ProfileEditModal from '@/components/myPage/ProfileEditModal.vue';
+import KanbanColumn from "@/components/myPage/KanbanColumn.vue";
 import { mapActions } from 'vuex';
 import axios from "@/axios";
 
@@ -70,6 +59,7 @@ export default {
     VerificationModal,
     MyPageSlideBar,
     ProfileEditModal,
+    KanbanColumn,
   },
   data() {
     return {
@@ -79,6 +69,9 @@ export default {
       beforeChallenges: [],
       ongoingChallenges: [],
       completedChallenges: [],
+      page: 0,
+      hasMore: true,
+
     };
   },
   async created() {
@@ -93,25 +86,38 @@ export default {
           headers: {
             Authorization: accessToken,
           },
+          params: {
+            page: this.page,
+            size: 10,
+          },
         });
+
         const challengeSlices = response.data.data;
+
         this.beforeChallenges = challengeSlices.beforeChallenges.content;
         this.ongoingChallenges = challengeSlices.ongoingChallenges.content;
         this.completedChallenges = challengeSlices.completedChallenges.content;
+
       } catch (error) {
         console.error('Failed to fetch challenge list:', error);
       }
     },
-    formatDate(dateString) {
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
-      return new Date(dateString).toLocaleDateString(undefined, options);
+    nextPage() {
+      if (this.hasMore) {
+        this.page += 1;
+        this.fetchChallenges();
+      }
+    },
+    prevPage() {
+      console.log('Previous Page Clicked');
+      if (this.page > 0) {
+        this.page -= 1;
+        this.fetchChallenges();
+      }
     },
     openVerificationModal(challengeId) {
       this.selectedChallengeId = challengeId;
       this.showVerificationModal = true;
-    },
-    handleCloseVerificationModal() {
-      this.showVerificationModal = false;
     },
     async updateUserProfile() {
       try {
@@ -124,6 +130,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 body,
@@ -173,58 +180,11 @@ html {
   padding-bottom: 1rem;
 }
 
-.kanban-column {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  min-width: 300px;
-  max-width: 300px;
-  padding: 1rem;
-}
-
 .kanban-column h2 {
   color: white;
   font-size: 1.2rem;
   margin-bottom: 1rem;
   text-align: center;
-}
-
-.no-data {
-  color: white;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.kanban-card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: move;
-}
-
-.kanban-card-image {
-  width: 100%;
-  height: auto;
-  max-height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.kanban-card-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.kanban-card-period {
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.kanban-card-progress {
-  margin-top: 0.5rem;
 }
 
 progress {
@@ -244,21 +204,30 @@ progress::-webkit-progress-value {
   border-radius: 5px;
 }
 
-.btn {
-  display: inline-block;
-  background-color: #667eea;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-decoration: none;
+.pagination-container {
   text-align: center;
+  margin-top: 20px;
 }
 
-.btn:hover {
-  background-color: #764ba2;
+.pagination-container button {
+  padding: 10px 20px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 10px;
+  transition: background-color 0.3s ease;
 }
+
+.pagination-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-container span {
+  font-size: 18px;
+  margin: 0 10px;
+}
+
 </style>
