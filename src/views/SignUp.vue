@@ -13,7 +13,6 @@
         <span v-if="usernameError" :class="{ error: !usernameValid, success: usernameValid }">{{ usernameError }}</span>
       </div>
 
-
       <div class="input-group">
         <input type="text" v-model="signUpData.name" required placeholder=" ">
         <label for="name">이름</label>
@@ -77,10 +76,10 @@
       <button type="submit">가입하기</button>
     </form>
 
-    <div class="social-signup">
-      <button class="social-btn naver-btn" @click="naverSignUp">
-        <i class="fas fa-n"></i> 네이버로 가입
-      </button>
+    <div class="social-login">
+      <a :href="naverLoginUrl" class="social-btn naver-btn">
+        <i class="fas fa-n"></i> 네이버
+      </a>
     </div>
     <div class="links">
       <router-link to="/">이미 계정이 있으신가요? 메인페이지로 이동</router-link>
@@ -120,9 +119,19 @@ export default {
       emailVerified: false,
       timer: 0,
       timerSeconds: 300,
-      isSendingCode: false
+      isSendingCode: false,
+      clientId: '_mFzmKmjK57NuQA5jw2I',
+      redirectUri: 'http://challengersbod.store/auth/callback/naver',
+      state: 'random_state_string'
 
     };
+  },
+  computed: {
+    naverLoginUrl() {
+      const baseUrl = 'https://nid.naver.com/oauth2.0/authorize';
+      const responseType = 'code';
+      return `${baseUrl}?client_id=${this.clientId}&response_type=${responseType}&redirect_uri=${this.redirectUri}&state=${this.state}`;
+    }
   },
   watch: {
     'signUpData.password': function (newVal) {
@@ -252,7 +261,6 @@ export default {
           this.emailError = '이메일이 이미 존재합니다.';
           this.emailValid = false;
         } else {
-          this.emailError = '이메일이 사용 가능합니다.';
           this.emailValid = true;
         }
       } catch (error) {
@@ -335,12 +343,6 @@ export default {
       this.passwordError = '';
       return true;
     },
-    googleSignUp() {
-      window.location.href = 'http://3.37.71.106:8080/oauth2/authorization/google';
-    },
-    naverSignUp() {
-      window.location.href = 'http://3.37.71.106:8080/oauth2/authorization/naver';
-    }
   }
 };
 </script>
@@ -514,12 +516,6 @@ button:hover {
 .toggle-admin-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.social-signup {
-  margin-top: 30px;
-  display: flex;
-  justify-content: space-between;
 }
 
 .social-btn {
