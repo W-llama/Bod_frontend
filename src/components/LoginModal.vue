@@ -20,16 +20,12 @@
         <button type="submit">로그인</button>
       </form>
       <div class="social-login">
-        <button class="social-btn google-btn" @click="googleLogin">
-          <i class="fab fa-google"></i> Google
-        </button>
         <a :href="naverLoginUrl" class="social-btn naver-btn">
           <i class="fas fa-n"></i> 네이버
         </a>
       </div>
       <div class="links">
         <router-link to="/signup">회원가입</router-link>
-        <a href="https://challengers.co.kr/forgot-password">비밀번호 찾기</a>
       </div>
     </div>
   </div>
@@ -73,9 +69,6 @@ export default {
         }
       }
     },
-    googleLogin() {
-      this.oauth2Login('google');
-    }
   }
 };
 </script>
@@ -235,11 +228,6 @@ button:hover {
 .social-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.google-btn {
-  background-color: #DB4437;
-  color: white;
 }
 
 .naver-btn {
