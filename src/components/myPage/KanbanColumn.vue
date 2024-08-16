@@ -11,6 +11,7 @@
           <progress :value="challenge.completionRate" max="100"></progress>
           <span>{{ challenge.completionRate }}%</span>
           <button class="btn" @click="$emit('verification', challenge.challengeId)">인증하기</button>
+          <button class="cancel-btn" @click="cancelChallenge(challenge.challengeId)">챌린지 신청 취소</button>
         </div>
       </div>
     </div>
@@ -18,6 +19,8 @@
 </template>
 
 <script>
+import axios from "@/axios";
+
 export default {
   name: 'KanbanColumn',
   props: {
@@ -28,10 +31,27 @@ export default {
   },
   methods: {
     formatDate(dateString) {
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      const options = {year: 'numeric', month: 'short', day: 'numeric'};
       return new Date(dateString).toLocaleDateString(undefined, options);
     },
-  },
+    async cancelChallenge(challengeId) {
+      const confirmed = window.confirm('챌린지를 정말로 취소하시겠습니까?');
+      if (confirmed) {
+        try {
+          const response = await axios.delete(`/challenges/${challengeId}`);
+          console.log('챌린지 삭제 성공:', response.data.message);
+          this.$emit('challengeCancelled', challengeId);
+          alert('챌린지 신청이 취소 되었습니다.');
+          window.location.reload();
+        } catch (error) {
+          console.error('챌린지 삭제 실패:', error);
+          alert('챌린지 삭제에 실패했습니다.');
+        }
+      } else {
+        console.log('챌린지 취소가 중단되었습니다.');
+      }
+    }
+  }
 };
 </script>
 
@@ -124,5 +144,29 @@ progress::-webkit-progress-value {
 
 .btn:hover {
   background-color: #764ba2;
+}
+
+.cancel-btn {
+  display: inline-block;
+  background-color: #e53e3e; /* 취소 버튼에 어울리는 붉은색 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 10px;
+  margin-left: 54%;
+  padding: 0.5rem 1rem; /* 버튼의 클릭 영역을 넓히기 위한 여백 추가 */
+}
+
+.cancel-btn:hover {
+  background-color: #c53030; /* 호버 시 더 어두운 색상 */
+}
+
+.cancel-btn:active {
+  background-color: #9b2c2c; /* 클릭 시 색상 변환 */
 }
 </style>
