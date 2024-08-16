@@ -42,11 +42,10 @@ export default {
         alert('새 비밀번호가 일치하지 않습니다.');
         return;
       }
-
       try {
         await this.$store.dispatch('changePassword', this.passwordData);
         alert('비밀번호가 성공적으로 변경되었습니다.');
-        this.$router.push('/myPage');
+        window.location.reload()
       } catch (error) {
         console.error('비밀번호 변경 실패:', error);
         alert('비밀번호 변경 실패');
