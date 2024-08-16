@@ -46,9 +46,6 @@ export default {
   },
   methods: {
     ...mapActions(['fetchUserProfile', 'fetchTotalChallengesCount', 'fetchTotalCompletedChallengesCount']),
-    isActive(route) {
-      return this.$route.path === route;
-    },
   },
   created() {
     if (!this.userProfile) {
@@ -161,8 +158,7 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.sidebar-menu a:hover,
-.sidebar-menu a.active {
+.sidebar-menu a:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 

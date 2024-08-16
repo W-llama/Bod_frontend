@@ -10,8 +10,8 @@
         <input type="text" v-model="signUpData.username" required placeholder=" ">
         <label for="username">아이디</label>
         <button type="button" @click="checkUsername" class="check-btn">중복 확인</button>
+        <span v-if="usernameError" :class="{ error: !usernameValid, success: usernameValid }">{{ usernameError }}</span>
       </div>
-      <span v-if="usernameError" :class="{ error: !usernameValid, success: usernameValid }">{{ usernameError }}</span>
 
       <div class="input-group">
         <input type="text" v-model="signUpData.name" required placeholder=" ">
@@ -30,8 +30,8 @@
           인증코드 전송
         </button>
         <span v-if="timer > 0" class="timer">타이머: {{ formatTime(timer) }}</span>
+        <span v-if="emailError" :class="{ error: !emailValid, success: emailValid }">{{ emailError }}</span>
       </div>
-      <span v-if="emailError" :class="{ error: !emailValid, success: emailValid }">{{ emailError }}</span>
 
       <div v-if="isSendingCode" class="loading-indicator">
         <img src="https://github.com/user-attachments/assets/fa8352da-8906-47af-b446-d56997872aa5" alt="Loading...">
@@ -42,14 +42,15 @@
         <input type="text" v-model="signUpData.code" required placeholder=" ">
         <label for="code">인증코드</label>
         <button type="button" @click="verifyEmailCode" class="check-btn">인증코드 확인</button>
+        <span v-if="verificationError" class="error">{{ verificationError }}</span>
       </div>
-      <span v-if="verificationError" class="error">{{ verificationError }}</span>
 
       <div class="input-group">
         <input type="password" v-model="signUpData.password" required placeholder=" ">
         <label for="password">비밀번호</label>
+        <span v-if="passwordError" class="error">{{ passwordError }}</span>
       </div>
-      <span v-if="passwordError" class="error">{{ passwordError }}</span>
+
 
       <div class="input-group">
         <input type="password" v-model="signUpData.confirmPassword" required placeholder=" ">
@@ -60,8 +61,8 @@
         <input type="text" v-model="signUpData.nickname" required placeholder=" ">
         <label for="nickname">닉네임</label>
         <button type="button" @click="checkNickname" class="check-btn">중복 확인</button>
+        <span v-if="nicknameError" :class="{ error: !nicknameValid, success: nicknameValid }">{{ nicknameError }}</span>
       </div>
-      <span v-if="nicknameError" :class="{ error: !nicknameValid, success: nicknameValid }">{{ nicknameError }}</span>
 
       <button type="button" @click="toggleAdminKey" class="toggle-admin-btn">관리자 시크릿 키 추가</button>
 
@@ -69,19 +70,16 @@
         <input type="password" v-model="signUpData.adminToken" placeholder=" ">
         <label for="adminToken">시크릿 키</label>
         <button type="button" @click="validateAdminToken" class="check-btn">검증</button>
+        <span v-if="adminTokenError" :class="{ error: !adminTokenValid, success: adminTokenValid }">{{ adminTokenError }}</span>
       </div>
-      <span v-if="adminTokenError" :class="{ error: !adminTokenValid, success: adminTokenValid }">{{ adminTokenError }}</span>
 
       <button type="submit">가입하기</button>
     </form>
 
-    <div class="social-signup">
-      <button class="social-btn google-btn" @click="googleSignUp">
-        <i class="fab fa-google"></i> Google로 가입
-      </button>
-      <button class="social-btn naver-btn" @click="naverSignUp">
-        <i class="fas fa-n"></i> 네이버로 가입
-      </button>
+    <div class="social-login">
+      <a :href="naverLoginUrl" class="social-btn naver-btn">
+        <i class="fas fa-n"></i> 네이버
+      </a>
     </div>
     <div class="links">
       <router-link to="/">이미 계정이 있으신가요? 메인페이지로 이동</router-link>
@@ -121,9 +119,19 @@ export default {
       emailVerified: false,
       timer: 0,
       timerSeconds: 300,
-      isSendingCode: false
+      isSendingCode: false,
+      clientId: '_mFzmKmjK57NuQA5jw2I',
+      redirectUri: 'http://challengersbod.store/auth/callback/naver',
+      state: 'random_state_string'
 
     };
+  },
+  computed: {
+    naverLoginUrl() {
+      const baseUrl = 'https://nid.naver.com/oauth2.0/authorize';
+      const responseType = 'code';
+      return `${baseUrl}?client_id=${this.clientId}&response_type=${responseType}&redirect_uri=${this.redirectUri}&state=${this.state}`;
+    }
   },
   watch: {
     'signUpData.password': function (newVal) {
@@ -253,7 +261,6 @@ export default {
           this.emailError = '이메일이 이미 존재합니다.';
           this.emailValid = false;
         } else {
-          this.emailError = '이메일이 사용 가능합니다.';
           this.emailValid = true;
         }
       } catch (error) {
@@ -336,12 +343,6 @@ export default {
       this.passwordError = '';
       return true;
     },
-    googleSignUp() {
-      window.location.href = 'http://3.37.71.106:8080/oauth2/authorization/google';
-    },
-    naverSignUp() {
-      window.location.href = 'http://3.37.71.106:8080/oauth2/authorization/naver';
-    }
   }
 };
 </script>
@@ -492,6 +493,7 @@ button {
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 10px;
+  margin-bottom: 30px;
 }
 
 button:hover {
@@ -514,12 +516,6 @@ button:hover {
 .toggle-admin-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.social-signup {
-  margin-top: 30px;
-  display: flex;
-  justify-content: space-between;
 }
 
 .social-btn {

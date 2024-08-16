@@ -1,7 +1,6 @@
 import { createStore } from 'vuex';
 import axios from '@/axios';
 import router from "@/router";
-import header from "@/components/Header.vue";
 
 export default createStore({
   state: {
@@ -12,6 +11,7 @@ export default createStore({
     PasswordData:null,
     totalChallengesCount: null,
     totalCompletedChallengesCount: null,
+    selectedUserProfile: {},
   },
   getters: {
     isAuthenticated: state => state.isAuthenticated,
@@ -20,6 +20,7 @@ export default createStore({
     accessToken: state => state.accessToken,
     totalChallengesCount: state => state.totalChallengesCount,
     totalCompletedChallengesCount: state => state.totalCompletedChallengesCount,
+    selectedUserProfile: state => state.selectedUserProfile
   },
   mutations: {
     setAuthenticated(state, status) {
@@ -40,6 +41,9 @@ export default createStore({
     },
     setTotalCompletedChallengesCount(state, count) { // 수정된 메서드 이름
       state.totalCompletedChallengesCount = count;
+    },
+    setSelectedUserProfile(state, userProfile) {
+      state.selectedUserProfile = userProfile
     },
     clearAuth(state) {
       state.isAuthenticated = false;
@@ -127,19 +131,34 @@ export default createStore({
         alert('프로필 조회에 실패했습니다. 다시 로그인 해주세요.');
       }
     },
-    async updateProfile({ commit }, profileData) {
+    async updateNickName({ commit }, profileData) {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.put('/users/profile', profileData, {
+        const response = await axios.put('/users/profile/nickname', profileData, {
           headers: {
             Authorization: accessToken,
           },
         });
         commit('setUserProfile', response.data.data);
-        alert('프로필이 성공적으로 수정되었습니다.');
+        alert('닉네임이 성공적으로 수정되었습니다.');
       } catch (error) {
-        console.error('프로필 수정 실패:', error);
-        alert('프로필 수정에 실패했습니다.');
+        console.error('닉네임 수정 실패:', error);
+        alert('닉네임 수정에 실패했습니다.');
+      }
+    },
+    async updateIntroduce ({ commit }, profileData) {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.put('/users/profile/introduce', profileData, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        commit('setUserProfile', response.data.data);
+        alert('자기소개가 성공적으로 수정되었습니다.');
+      } catch (error) {
+        console.error('닉네임 수정 실패:', error);
+        alert('자기소개가 성공적으로 수정되었습니다.');
       }
     },
     async updateProfileImage({ commit }, imageData) {
@@ -209,5 +228,20 @@ export default createStore({
         throw error;
       }
     },
+    async getUserProfile({ commit }, userId) {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.get(`/users/${userId}`, {
+          headers: {
+            Authorization: accessToken,
+          },
+        });
+        console.log(response.data.data)
+        commit('setSelectedUserProfile', response.data.data);
+      } catch (error) {
+        console.error('프로필 조회 실패:', error);
+        alert('프로필 조회 실패: ' + error.message);
+      }
+    }
   },
 });
