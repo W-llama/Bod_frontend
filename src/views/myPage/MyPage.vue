@@ -49,7 +49,7 @@
     </main>
     <VerificationModal v-if="showVerificationModal"
                        :challengeId="selectedChallengeId"
-                       @close="showVerificationModal = false" />
+                       @close="handleCloseVerificationModal" />
 
     <ProfileEditModal v-if="showProfileEditModal"
                       @close="showProfileEditModal = false"
@@ -109,6 +109,9 @@ export default {
     openVerificationModal(challengeId) {
       this.selectedChallengeId = challengeId;
       this.showVerificationModal = true;
+    },
+    handleCloseVerificationModal() {
+      this.showVerificationModal = false;
     },
     async updateUserProfile() {
       try {
