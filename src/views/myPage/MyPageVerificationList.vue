@@ -11,7 +11,7 @@
           <h2 class="verification-title">{{ verification.challengeTitle }}</h2>
           <h2 class="verification-status">인증 상태 : {{formatStatus(verification.status)}}</h2>
           <p class="verification-date">신청일: {{formatDate(verification.createdAt)}}</p>
-          <div class="btn-group">
+          <div class="btn-group" v-if="verification.status !== 'APPROVE'">
             <button @click="cancelVerification(verification.verificationId)" class="btn">인증취소</button>
           </div>
         </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import { mapActions } from 'vuex';
 import MyPageSideBar from '@/components/myPage/MyPageSideBar.vue';
 import ProfileEditModal from '@/components/myPage/ProfileEditModal.vue';
 import axios from '@/axios';
@@ -53,27 +53,22 @@ export default {
     ...mapActions(['fetchUserProfile']),
     async fetchVerifications() {
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.get('/verifications/users', {
-          headers: {
-            Authorization: accessToken
-          },
-        });
+        const response = await this.axiosGet('/verifications/users');
         this.verifications = response.data.data.content;
       } catch (error) {
         console.error('Failed to fetch verifications:', error);
       }
     },
     async cancelVerification(verificationId) {
+      const confirmed = window.confirm('인증을 정말 취소하시겠습니까?');
+      if (!confirmed) return;
+
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        await axios.delete(`/verifications/${verificationId}`, {
-          headers: {
-            Authorization: accessToken
-          }
-        });
+        await this.axiosDelete(`/verifications/${verificationId}`);
+        this.verifications = this.verifications.filter(
+            verification => verification.verificationId !== verificationId
+        );
         alert('인증이 취소되었습니다.');
-        window.location.reload(); // 페이지 새로고침
       } catch (error) {
         console.error('Failed to cancel verification:', error);
         alert('인증 취소 중 오류가 발생했습니다.');
@@ -92,16 +87,24 @@ export default {
       return `${date} ${time.split('.')[0]}`;
     },
     formatStatus(status) {
-      switch (status) {
-        case 'APPROVE':
-          return '승인';
-        case 'REJECT':
-          return '거절';
-        case 'PENDING':
-          return '대기';
-        default:
-          return status;
-      }
+      const statusMap = {
+        APPROVE: '승인',
+        REJECT: '거절',
+        PENDING: '대기',
+      };
+      return statusMap[status] || status;
+    },
+    axiosGet(url) {
+      const accessToken = localStorage.getItem('accessToken');
+      return axios.get(url, {
+        headers: { Authorization: accessToken }
+      });
+    },
+    axiosDelete(url) {
+      const accessToken = localStorage.getItem('accessToken');
+      return axios.delete(url, {
+        headers: { Authorization: accessToken }
+      });
     },
   }
 };
@@ -110,7 +113,7 @@ export default {
 <style scoped>
 body, html {
   font-family: 'Noto Sans KR', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
   color: #333;
   line-height: 1.6;
   margin: 0;
@@ -131,11 +134,12 @@ body, html {
 }
 
 header {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
   text-align: center;
   color: white;
   padding: 1rem 0;
   margin-bottom: 2rem;
+  border-radius: 8px;
 }
 
 .verification-list {
@@ -148,13 +152,13 @@ header {
 }
 
 .verification-item {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   padding: 1.5rem;
   color: white;
   max-width: 250px;
-  height: 300px;
+  height: 350px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -164,23 +168,24 @@ header {
 .verification-title {
   font-size: 1.3rem;
   font-weight: 600;
-  margin-top:1px;
+  margin-top: 1px;
 }
-.verification-status{
+
+.verification-status {
   font-size: 1rem;
   font-weight: 500;
-  margin-top:1px;
+  margin-top: 1px;
 }
 
 .verification-date {
   font-size: 0.9rem;
   opacity: 0.8;
-  margin-top:1px;
+  margin-top: 1px;
 }
 
 .verification-image {
   width: 100%;
-  height: auto;
+  height: 250px;
   max-height: 200px;
   object-fit: cover;
   border-radius: 5px;
@@ -212,5 +217,6 @@ header {
   text-align: center;
   color: white;
   font-size: 1.2rem;
+  margin-top: 2rem;
 }
 </style>
