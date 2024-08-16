@@ -28,6 +28,7 @@ export default {
     this.checkAuth();
   },
 }
+//병합이 되지않는 문제를 수정하기 위한 주석입니다.
 </script>
 
 <style scoped>
