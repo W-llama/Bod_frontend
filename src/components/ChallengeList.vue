@@ -2,6 +2,7 @@
   <div class="container">
     <h1>챌린지 카테고리</h1>
 
+
     <div class="category-list">
       <button
           v-for="category in backendCategories"
@@ -11,6 +12,15 @@
       >
         {{ category }}
       </button>
+    </div>
+
+    <div class="search-bar">
+      <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="챌린지 제목 검색..."
+      />
+      <button @click="performSearch">검색</button>
     </div>
 
     <div v-if="noChallenges" class="no-challenges">
@@ -57,6 +67,7 @@ export default {
     return {
       backendCategories: ['전체', '건강', '공부', '취미', '경제', '기타'],
       selectedCategory: '전체',
+      searchQuery: '',
       challenges: [],
       currentPage: 1,
       itemsPerPage: 9,
@@ -68,6 +79,10 @@ export default {
     this.fetchChallenges(this.currentPage);
   },
   methods: {
+    performSearch() {
+      this.currentPage = 1;
+      this.fetchChallenges(this.currentPage, true);
+    },
     fetchChallenges(pageNumber) {
       this.currentPage = pageNumber;
       this.noChallenges = false;
@@ -75,7 +90,9 @@ export default {
       const zeroBasedPageNumber = pageNumber - 1;
 
       let apiUrl = '';
-      if (this.selectedCategory === '전체') {
+      if (this.searchQuery) {
+        apiUrl = `/challenges/search?title=${encodeURIComponent(this.searchQuery)}&page=${zeroBasedPageNumber}&size=${this.itemsPerPage}`;
+      } else if (this.selectedCategory === '전체') {
         apiUrl = `/challenges?page=${zeroBasedPageNumber}&size=${this.itemsPerPage}`;
       } else {
         const categoryEnum = this.mapCategoryToBackendEnum(this.selectedCategory);
@@ -134,6 +151,25 @@ h1 {
   color: white;
   text-align: center;
   margin-bottom: 30px;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar input {
+  width: calc(100% - 100px);
+  padding: 10px;
+  font-size: 16px;
+}
+
+.search-bar button {
+  width: 100px;
+  padding: 10px;
+  font-size: 16px;
+  margin-left: 10px;
 }
 
 .category-list {
