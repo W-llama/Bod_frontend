@@ -2,7 +2,7 @@ import axios from 'axios';
 import store from './store';
 
 const instance = axios.create({
-  baseURL: 'https://localhost:8080/api', // Backend server URL
+  baseURL: 'http://localhost:8080/api', // Backend server URL
   timeout: 5000,
   withCredentials: true, // 자격 증명 포함
 });
